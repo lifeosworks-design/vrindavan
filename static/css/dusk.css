@@ -1,0 +1,203 @@
+/* VRINDAVAN — "Mandir at Dusk" storefront theme (loaded after app.css; admin does not load it).
+   Bolder than the first "Quiet Mandir" pass: dark temple-night header/hero, glowing gold arch, kumkum pill buttons,
+   colour-coded deity cards, marigold marquee. Product photography still supplies the real richness.
+   Still CSP-safe (no inline styles) and light: CSS-only motion, honours prefers-reduced-motion. */
+:root{
+  --ivory:#FFF7EA; --sand:#F7E8CF; --ink:#24110E; --ink-soft:#5E4A3E; --line:#E6D3B3;
+  --night:#1B0A10; --night-2:#2E1019; --gold:#E9B449; --gold-2:#F6D27A; --gold-deep:#B07A1F; --marigold:#F5A524;
+  --maroon:#A71D2A; --maroon-dark:#7E1220; --brass:#9A5F0C;
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,"Noto Serif","Noto Serif Devanagari",Georgia,serif;
+}
+body{background:var(--ivory)}
+h1,h2,h3{font-family:var(--display)}
+
+/* ---------- bars + header (dark) ---------- */
+.bar-announce{background:linear-gradient(90deg,var(--gold-deep),var(--gold),var(--gold-deep));color:#2A1308;font-weight:600}
+.bar-demo{background:#2B1A12;color:#F2DDB4;border-bottom:1px solid rgba(233,180,73,.25)}
+.site-header{background:rgba(27,10,16,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(233,180,73,.28)}
+.icon-btn{color:#FBEBCB}
+.icon-btn:hover{background:rgba(233,180,73,.16)}
+.badge{background:var(--gold);color:#2A1308}
+.brand img{height:42px;filter:drop-shadow(0 0 10px rgba(233,180,73,.35))}
+.search-panel{background:var(--night-2);border-top:1px solid rgba(233,180,73,.2)}
+.search-panel input{background:#FFF7EA}
+@media (min-width:1100px){
+  .main-nav a{color:#F6E3BC}
+  .main-nav a:hover{color:#fff;border-color:var(--gold)}
+}
+
+/* ---------- buttons: pill, gradient, glow ---------- */
+.btn{border-radius:999px;padding:0 26px;letter-spacing:.01em;background:linear-gradient(180deg,#C4283A,#8F1424);border-color:#8F1424;box-shadow:0 8px 20px rgba(143,20,36,.30);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(143,20,36,.36);background:linear-gradient(180deg,#CF2F42,#98172A)}
+.btn:active{transform:translateY(0)}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--ink);box-shadow:none}
+.btn-outline:hover{background:var(--ink);color:var(--ivory);box-shadow:none}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),#D79B2D);border-color:#C58A22;color:#2A1308;box-shadow:0 10px 26px rgba(233,180,73,.35)}
+.btn-gold:hover{background:linear-gradient(180deg,#FBDD8F,#E2A736);color:#2A1308;box-shadow:0 14px 30px rgba(233,180,73,.45)}
+.btn-ghost-light{background:transparent;color:#FBEBCB;border:1.5px solid rgba(251,235,203,.6);box-shadow:none}
+.btn-ghost-light:hover{background:rgba(251,235,203,.12);color:#fff;box-shadow:none}
+.chip{border-width:1.5px;border-radius:999px}
+.chip.on-dark{color:#FBEBCB;border-color:rgba(251,235,203,.45);min-height:40px;padding:0 16px;font-size:.875rem}
+.chip.on-dark:hover{background:var(--gold);color:#2A1308;border-color:var(--gold)}
+
+/* ---------- HERO ---------- */
+.hero-dusk{position:relative;overflow:hidden;color:#FBEBCB;padding:34px 0 72px;
+  background:radial-gradient(ellipse 70% 55% at 72% 30%,rgba(233,180,73,.42),transparent 62%),radial-gradient(ellipse 60% 40% at 10% 90%,rgba(167,29,42,.45),transparent 65%),linear-gradient(165deg,var(--night-2),var(--night) 75%)}
+.hero-dusk::before{content:"वृन्दावन";position:absolute;left:-3%;bottom:6%;font:700 clamp(5.5rem,30vw,17rem)/1 var(--display);color:rgba(233,180,73,.07);white-space:nowrap;pointer-events:none;letter-spacing:-.02em}
+.hero-dusk::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:24px;background:radial-gradient(circle at 12px 0,transparent 11px,var(--ivory) 12px) repeat-x;background-size:24px 24px}
+.hero-dusk .container{position:relative;z-index:1;display:grid;gap:28px}
+.eyebrow{font:600 .75rem var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.hero-dusk h1{font-size:clamp(2.5rem,10.5vw,4.8rem);line-height:1.02;color:#FFF4DC;margin:.25em 0 .3em;font-weight:700}
+.hero-dusk h1 em{font-style:italic;background:linear-gradient(180deg,var(--gold-2),var(--gold) 60%,#C98B25);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-dusk p.lede{color:#EAD3AA;font-size:1.0625rem;max-width:34ch;margin:0 0 20px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px}
+.hero-dusk .arch{width:min(76%,340px);margin:0 auto;aspect-ratio:4/5;border-radius:999px 999px 10px 10px;box-shadow:0 0 0 1px rgba(233,180,73,.7),0 0 60px rgba(233,180,73,.40),0 30px 60px rgba(0,0,0,.45);background:#3A1620}
+.hero-dusk .arch::after{inset:8px;border:1.5px solid rgba(246,210,122,.8);border-radius:999px 999px 6px 6px}
+.hero-dusk .arch img{width:100%;height:100%;object-fit:cover}
+.hero-art{position:relative}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--gold-2);box-shadow:0 0 12px 3px rgba(246,210,122,.8);opacity:.0;animation:floaty 6s ease-in-out infinite}
+.spark.s1{left:8%;top:18%;animation-delay:0s}.spark.s2{right:6%;top:34%;animation-delay:1.6s}.spark.s3{left:14%;bottom:20%;animation-delay:3.1s}.spark.s4{right:16%;bottom:8%;animation-delay:4.4s}
+@keyframes floaty{0%,100%{opacity:0;transform:translateY(12px) scale(.6)}40%,60%{opacity:.95;transform:translateY(-10px) scale(1)}}
+
+/* ---------- marquee ---------- */
+.marquee{background:linear-gradient(90deg,var(--gold-deep),var(--gold),var(--gold-deep));color:#2A1308;overflow:hidden;white-space:nowrap;border-top:1px solid rgba(255,255,255,.3)}
+.marquee .track{display:inline-flex;gap:28px;padding:12px 0;animation:slide 38s linear infinite;will-change:transform}
+.marquee span{font:600 .9375rem var(--display);letter-spacing:.06em}
+.marquee b{font-weight:400;opacity:.7}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}
+.sec-head .eyebrow{color:var(--gold-deep);display:block;margin-bottom:4px}
+.sec-head h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0}
+.section-pad{padding:44px 0 8px}
+
+/* deity cards */
+.deity-rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gut) * -1);padding:6px var(--gut) 18px;scrollbar-width:none}
+.deity-rail::-webkit-scrollbar{display:none}
+.deity-card{flex:0 0 150px;scroll-snap-align:start;display:block;border-radius:22px;padding:12px 12px 16px;text-align:center;color:#fff;text-decoration:none;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#7E1220,#3B0D16);box-shadow:0 14px 30px rgba(60,20,10,.22);transition:transform .2s,box-shadow .2s}
+.deity-card:hover{transform:translateY(-4px) rotate(-.4deg);box-shadow:0 20px 38px rgba(60,20,10,.3);color:#fff}
+.deity-card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 18%,rgba(255,255,255,.28),transparent 55%)}
+.deity-card .arch{position:relative;aspect-ratio:4/5;margin:0 0 10px;box-shadow:0 0 0 1px rgba(255,255,255,.55)}
+.deity-card .arch::after{border-color:rgba(255,255,255,.6)}
+.deity-card .arch img{width:100%;height:100%;object-fit:cover}
+.deity-card strong{position:relative;display:block;font:700 1.125rem var(--display)}
+.deity-card .native{position:relative;display:block;font-size:1.25rem;color:#FFE9B8;font-weight:600}
+.d-ganesha{background:linear-gradient(160deg,#F7B733,#D2691A)}
+.d-krishna{background:linear-gradient(160deg,#1E9A9A,#12395F)}
+.d-lakshmi{background:linear-gradient(160deg,#E56B8E,#8F2447)}
+.d-shiva{background:linear-gradient(160deg,#7A7FA3,#25284A)}
+.d-hanuman{background:linear-gradient(160deg,#F5632B,#A91A28)}
+.d-durga{background:linear-gradient(160deg,#D01F3E,#5E0E1D)}
+.d-vishnu{background:linear-gradient(160deg,#4C7BD9,#1B2A6B)}
+
+/* product cards */
+.card-img{border-radius:18px;box-shadow:0 10px 26px rgba(60,20,10,.14);transition:transform .25s,box-shadow .25s}
+.card-link:hover .card-img{transform:translateY(-4px);box-shadow:0 18px 34px rgba(60,20,10,.22)}
+.card-link:hover .card-img img{transform:scale(1.04)}
+.card-img img{transition:transform .5s}
+.card-title{font-size:1rem}
+.price{color:var(--maroon);font-size:1.0625rem}
+.price s{color:var(--ink-soft)}
+.tag{background:linear-gradient(180deg,#3A1620,#1B0A10);color:var(--gold-2);border-radius:999px;padding:4px 10px}
+.tag.out{background:#6B5A50;color:#fff}
+.wish{box-shadow:0 4px 12px rgba(0,0,0,.18)}
+
+/* promise cards */
+.promise{display:grid;gap:14px}
+.promise .pt{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 26px rgba(60,20,10,.07)}
+.promise .ic{flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(160deg,var(--gold-2),#D79B2D);display:flex;align-items:center;justify-content:center;color:#2A1308}
+.promise .ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.promise h3{margin:0 0 4px;font-size:1.0625rem}
+.promise p{margin:0;color:var(--ink-soft);font-size:.9375rem}
+
+/* festival band */
+.festival{position:relative;overflow:hidden;margin-top:36px;color:#FBEBCB;text-align:center;padding:56px 0;
+  background:radial-gradient(ellipse 60% 70% at 50% 0%,rgba(233,180,73,.40),transparent 70%),linear-gradient(170deg,var(--night-2),var(--night))}
+.festival::before{content:"श्री";position:absolute;right:-2%;top:-10%;font:700 clamp(8rem,38vw,20rem)/1 var(--display);color:rgba(233,180,73,.07);pointer-events:none}
+.festival .container{position:relative}
+.festival h2{font-size:clamp(1.9rem,7.5vw,3.2rem);color:#FFF4DC}
+.festival p{color:#EAD3AA;max-width:36ch;margin:0 auto 22px}
+
+/* ---------- page banners (collection) ---------- */
+.page-hero{position:relative;overflow:hidden;color:#FBEBCB;padding:26px 0 34px;margin-bottom:22px;background:radial-gradient(ellipse 70% 120% at 85% 0%,rgba(233,180,73,.36),transparent 60%),linear-gradient(165deg,var(--night-2),var(--night))}
+.page-hero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:16px;background:radial-gradient(circle at 8px 0,transparent 7px,var(--ivory) 8px) repeat-x;background-size:16px 16px}
+.page-hero .crumbs,.page-hero .crumbs a{color:#D9C197;padding-top:0}
+.page-hero h1{color:#FFF4DC;font-size:clamp(2rem,8vw,3.2rem);margin-bottom:.15em}
+.page-hero .native{color:var(--gold);font-size:.7em}
+.page-hero .muted{color:#D9C197}
+.filter-pill{background:var(--night);border-color:var(--gold-deep);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.filter-pill button{color:#FBEBCB}
+.filter-pill button+button{border-left-color:rgba(233,180,73,.35)}
+
+/* ---------- product page ---------- */
+.gallery{border-radius:22px;padding:12px;background:radial-gradient(ellipse at 50% 30%,rgba(233,180,73,.22),transparent 65%),var(--sand)}
+.gallery-slide{border-radius:16px}
+.buy h1{font-size:clamp(1.6rem,6vw,2.3rem)}
+.buy .big-price{color:var(--maroon);font-size:1.75rem}
+.pin-box{border-radius:16px;background:#fff;border-color:var(--line)}
+details.acc summary::after{color:var(--gold-deep)}
+.sticky-buy{background:rgba(27,10,16,.97);border-top:1px solid rgba(233,180,73,.4);color:#FBEBCB}
+.sticky-buy .p span{color:#D9C197}
+@media (min-width:900px){
+  .buy{background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:0 20px 50px rgba(60,20,10,.10)}
+}
+
+/* ---------- cart / checkout / account polish ---------- */
+.summary,.co-section,.card-box,.order-card{border-radius:20px;box-shadow:0 8px 22px rgba(60,20,10,.06)}
+.summary{background:#fff}
+.progress i{background:linear-gradient(90deg,var(--gold-deep),var(--gold))}
+.page-head h1{font-size:clamp(1.8rem,7vw,2.6rem)}
+.acct-nav a.cur{background:var(--night);color:var(--gold-2);border-color:var(--night)}
+input[type=text],input[type=email],input[type=tel],input[type=password],input[type=number],input[type=search],select,textarea{border-radius:12px}
+.radio-card{border-radius:16px}
+
+/* ---------- footer ---------- */
+.site-footer{background:linear-gradient(180deg,var(--night-2),var(--night));border-top:3px solid var(--gold-deep);margin-top:0}
+.site-footer .foot-brand img{width:110px;filter:drop-shadow(0 0 16px rgba(233,180,73,.4))}
+.foot-cols h3{color:var(--gold)}
+.foot-name{color:#FFF4DC}
+
+/* ---------- scroll reveal (only active when JS is on) ---------- */
+html.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+html.js .reveal.in{opacity:1;transform:none}
+html.js .reveal.d1{transition-delay:.08s}html.js .reveal.d2{transition-delay:.16s}html.js .reveal.d3{transition-delay:.24s}
+
+/* ---------- larger screens ---------- */
+@media (min-width:600px){
+  .promise{grid-template-columns:repeat(3,1fr)}
+  .deity-card{flex-basis:170px}
+}
+@media (min-width:900px){
+  .hero-dusk{padding:64px 0 110px}
+  .hero-dusk .container{grid-template-columns:1.1fr .9fr;align-items:center;gap:56px}
+  .hero-dusk .arch{width:min(100%,400px)}
+  .deity-rail{display:grid;grid-template-columns:repeat(6,1fr);overflow:visible;margin:0;padding:6px 0 18px}
+  .deity-card{flex:none}
+  .brand img{height:56px}
+  .page-hero{padding:40px 0 48px}
+}
+@media (prefers-reduced-motion:reduce){
+  .marquee .track{animation:none}
+  .spark{animation:none;opacity:.6}
+  html.js .reveal{opacity:1;transform:none;transition:none}
+  .btn,.deity-card,.card-img,.card-img img{transition:none}
+}
+
+.purpose-links.center{justify-content:center}
+
+/* ---- bigger "Shop by deity" tiles ---- */
+.deity-rail{gap:16px}
+.deity-card{flex:0 0 min(74vw,280px);padding:16px 16px 22px;border-radius:28px}
+.deity-card .arch{margin-bottom:14px}
+.deity-card strong{font-size:1.5rem}
+.deity-card .native{font-size:1.875rem;line-height:1.25}
+@media (min-width:600px){.deity-card{flex-basis:300px}}
+@media (min-width:900px){
+  .deity-rail{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+  .deity-card{flex:none;padding:20px 20px 26px;border-radius:32px}
+  .deity-card strong{font-size:1.75rem}
+  .deity-card .native{font-size:2.125rem}
+}
