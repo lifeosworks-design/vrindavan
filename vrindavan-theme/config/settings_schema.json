@@ -1,0 +1,46 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Vrindavan",
+    "theme_version": "1.0.0",
+    "theme_author": "Vrindavan",
+    "theme_documentation_url": "https://help.shopify.com/",
+    "theme_support_url": "https://help.shopify.com/"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Square image, at least 64 x 64 px." },
+      { "type": "text", "id": "whatsapp", "label": "WhatsApp number", "info": "Digits with country code, e.g. 919876543210. Leave blank to hide the chat button." }
+    ]
+  },
+  {
+    "name": "Delivery, COD and returns messages",
+    "settings": [
+      { "type": "header", "content": "Shown on product pages, cart and footer" },
+      { "type": "paragraph", "content": "Only publish statements you can back up. Delivery times, \"free shipping\" and return terms must match what your shipping settings and policies really do." },
+      { "type": "number", "id": "free_shipping_threshold", "label": "Free shipping at or above (₹)", "default": 1499, "info": "Used for the cart progress bar and the product-page note. Set 0 to hide. Create the matching free-shipping rate in Settings > Shipping." },
+      { "type": "textarea", "id": "delivery_note", "label": "Delivery note", "default": "Delivery time is confirmed for your PIN code after you place the order." },
+      { "type": "textarea", "id": "cod_note", "label": "Cash on delivery note", "info": "Leave blank to hide. Example: Pay on delivery available on eligible orders.", "default": "" },
+      { "type": "textarea", "id": "returns_summary", "label": "Returns summary", "default": "If a piece arrives damaged, tell us within 48 hours with photos. See the returns policy for details." }
+    ]
+  },
+  {
+    "name": "Business details",
+    "settings": [
+      { "type": "text", "id": "legal_name", "label": "Legal / business name" },
+      { "type": "text", "id": "gstin", "label": "GSTIN", "info": "Leave blank until you are GST-registered." },
+      { "type": "textarea", "id": "business_address", "label": "Registered address" },
+      { "type": "text", "id": "support_email", "label": "Support email" },
+      { "type": "text", "id": "support_phone", "label": "Support phone" }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram URL" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook URL" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube URL" }
+    ]
+  }
+]

@@ -1,0 +1,74 @@
+{%- assign menu = linklists[section.settings.menu] -%}
+<header class="site-header" {{ section.shopify_attributes }}>
+  <div class="container hdr">
+    <div class="hdr-left">
+      <button type="button" class="icon-btn menu-btn" data-drawer-open aria-label="Open menu" aria-expanded="false" aria-controls="drawer">{% render 'icon', name: 'menu' %}</button>
+      <nav class="main-nav" aria-label="Main">
+        {%- for link in menu.links limit: 5 -%}
+          <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+    </div>
+
+    <a class="brand" href="{{ routes.root_url }}" aria-label="{{ shop.name }} home">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 420 | image_tag: width: 210, height: 70, alt: shop.name, loading: 'eager' }}
+      {%- else -%}
+        <img src="{{ 'wordmark.webp' | asset_url }}" width="420" height="140" alt="{{ shop.name }}">
+      {%- endif -%}
+    </a>
+
+    <div class="hdr-right">
+      <button type="button" class="icon-btn" data-search-toggle aria-label="Search">{% render 'icon', name: 'search' %}</button>
+      <a class="icon-btn" href="{{ pages.wishlist.url }}" aria-label="Wishlist">{% render 'icon', name: 'heart' %}<span class="badge" data-wish-count hidden>0</span></a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="icon-btn" href="{{ routes.account_url }}" aria-label="{% if customer %}My account{% else %}Sign in{% endif %}">{% render 'icon', name: 'user' %}</a>
+      {%- endif -%}
+      <a class="icon-btn" href="{{ routes.cart_url }}" aria-label="Cart, {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}">{% render 'icon', name: 'bag' %}{% if cart.item_count > 0 %}<span class="badge">{{ cart.item_count }}</span>{% endif %}</a>
+    </div>
+  </div>
+
+  <div class="search-panel" role="search">
+    <div class="container">
+      <form class="search-form" action="{{ routes.search_url }}" method="get" autocomplete="off">
+        <input type="hidden" name="type" value="product">
+        <label class="visually-hidden" for="header-search">Search</label>
+        <input id="header-search" type="search" name="q" placeholder="Search Ganesha, Krishna, brass…" maxlength="80" value="{{ search.terms | escape }}">
+        <button class="btn" type="submit">Search</button>
+        <div class="suggest" hidden></div>
+      </form>
+    </div>
+  </div>
+</header>
+
+<div class="drawer-overlay" data-drawer-close></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Menu">
+  <div class="drawer-top">
+    <img src="{{ 'wordmark.webp' | asset_url }}" width="140" height="47" alt="{{ shop.name }}">
+    <button type="button" class="icon-btn" data-drawer-close aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
+  </div>
+  {%- for link in menu.links -%}
+    <a class="dlink" href="{{ link.url }}"><span>{{ link.title }}</span></a>
+    {%- for child in link.links -%}
+      <a class="dlink dlink-child" href="{{ child.url }}"><span>{{ child.title }}</span></a>
+    {%- endfor -%}
+  {%- endfor -%}
+  <h2>Help</h2>
+  <a class="dlink" href="{{ pages.contact.url }}"><span>Contact us</span></a>
+  {%- if shop.shipping_policy.url != blank -%}<a class="dlink" href="{{ shop.shipping_policy.url }}"><span>Shipping</span></a>{%- endif -%}
+  {%- if shop.refund_policy.url != blank -%}<a class="dlink" href="{{ shop.refund_policy.url }}"><span>Returns &amp; refunds</span></a>{%- endif -%}
+  {%- if shop.customer_accounts_enabled -%}
+    <h2>Account</h2>
+    <a class="dlink" href="{{ routes.account_url }}"><span>{% if customer %}My account{% else %}Sign in{% endif %}</span></a>
+  {%- endif -%}
+</aside>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "image_picker", "id": "logo", "label": "Logo (wordmark)", "info": "Leave empty to use the Vrindavan wordmark that ships with the theme." }
+  ]
+}
+{% endschema %}

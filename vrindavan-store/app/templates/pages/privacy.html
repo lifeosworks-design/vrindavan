@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Privacy policy — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section"><div class="prose">
+<h1>Privacy policy</h1>
+{% if S.policies_reviewed != "1" %}<div class="draft-note">Draft — this page has not yet been reviewed by a legal adviser and will be finalised before launch.</div>{% endif %}
+<p>We collect the details you give us — name, email, phone, address and order information — to process and deliver your orders, provide your account, and answer your messages. We do not sell your data.</p>
+<p>Marketing messages are sent only if you opt in, and you can change that in your account.</p>
+<p>The full policy, including data retention and your rights, will be finalised with a legal adviser before launch.</p>
+</div></div>
+{% endblock %}

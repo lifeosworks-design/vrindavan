@@ -1,0 +1,78 @@
+<div class="container narrow-wide" {{ section.shopify_attributes }}>
+  <div class="page-head"><h1>Your cart</h1></div>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="empty">
+      <p>Your cart is empty.</p>
+      <p><a class="btn" href="{{ routes.all_products_collection_url }}">Browse murtis</a></p>
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" id="cart-form" novalidate>
+      <div class="stack-2">
+        <div>
+          {%- for item in cart.items -%}
+            <div class="cart-line">
+              <a class="thumb" href="{{ item.url }}">
+                {%- if item.image -%}{{ item.image | image_url: width: 240 | image_tag: widths: '120, 168, 240', sizes: '84px', loading: 'lazy', alt: item.image.alt | default: item.product.title }}{%- endif -%}
+              </a>
+              <div>
+                <h3><a href="{{ item.url }}">{{ item.product.title }}</a></h3>
+                {%- unless item.product.has_only_default_variant -%}<div class="muted small">{{ item.variant.title }}</div>{%- endunless -%}
+                {%- for property in item.properties -%}{%- unless property.first contains '_' -%}<div class="muted small">{{ property.first }}: {{ property.last }}</div>{%- endunless -%}{%- endfor -%}
+                <div class="price">{{ item.final_price | money_without_trailing_zeros }}{% if item.original_price > item.final_price %}<s>{{ item.original_price | money_without_trailing_zeros }}</s>{% endif %}</div>
+                {%- for discount in item.line_level_discount_allocations -%}<div class="small muted">{{ discount.discount_application.title }}</div>{%- endfor -%}
+                <div class="ctrl">
+                  <label class="visually-hidden" for="q{{ item.key }}">Quantity for {{ item.product.title }}</label>
+                  <select id="q{{ item.key }}" name="updates[]" data-autosubmit>
+                    {%- assign max_q = 10 -%}
+                    {%- if item.quantity > max_q -%}{%- assign max_q = item.quantity -%}{%- endif -%}
+                    {%- for n in (1..max_q) -%}<option value="{{ n }}" {% if n == item.quantity %}selected{% endif %}>{{ n }}</option>{%- endfor -%}
+                  </select>
+                  <a class="link-btn" href="{{ item.url_to_remove }}">Remove</a>
+                  <strong>{{ item.final_line_price | money_without_trailing_zeros }}</strong>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <aside class="summary">
+          <h2>Order summary</h2>
+          {%- assign threshold = settings.free_shipping_threshold | times: 100 -%}
+          {%- if threshold > 0 -%}
+            {%- assign gap = threshold | minus: cart.total_price -%}
+            {%- if gap > 0 -%}
+              {%- assign pct = cart.total_price | times: 100 | divided_by: threshold -%}
+              {%- assign bucket = pct | divided_by: 10 | times: 10 -%}
+              <p class="small">Add <strong>{{ gap | money_without_trailing_zeros }}</strong> more for free shipping.</p>
+              <div class="progress" aria-hidden="true"><i class="w{{ bucket }}"></i></div>
+            {%- else -%}
+              <p class="small">You qualify for free shipping.</p>
+            {%- endif -%}
+          {%- endif -%}
+          <dl>
+            <div class="r"><dt>Subtotal</dt><dd>{{ cart.items_subtotal_price | money_without_trailing_zeros }}</dd></div>
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+              {%- for discount in cart.cart_level_discount_applications -%}<div class="r"><dt>{{ discount.title }}</dt><dd>−{{ discount.total_allocated_amount | money_without_trailing_zeros }}</dd></div>{%- endfor -%}
+            {%- endif -%}
+            <div class="r total"><dt>Estimated total</dt><dd>{{ cart.total_price | money_without_trailing_zeros }}</dd></div>
+          </dl>
+          <p class="small muted">Shipping, any cash-on-delivery fee and discount codes are handled at checkout.</p>
+          <div class="field cart-note">
+            <label for="cart-note">Note for us (optional)</label>
+            <textarea id="cart-note" name="note" maxlength="400">{{ cart.note }}</textarea>
+          </div>
+          <button type="submit" name="checkout" class="btn btn-block">Checkout</button>
+          <p class="center small"><a href="{{ routes.all_products_collection_url }}">Continue shopping</a></p>
+          <noscript><button type="submit" name="update" class="btn btn-outline btn-block">Update cart</button></noscript>
+        </aside>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart page"
+}
+{% endschema %}

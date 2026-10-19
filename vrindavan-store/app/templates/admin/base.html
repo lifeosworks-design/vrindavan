@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="csrf" content="{{ csrf_token() }}">
+<title>{% block title %}Admin{% endblock %} — {{ S.store_name }} admin</title>
+<link rel="icon" href="{{ url_for('static', filename='brand/favicon-64.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=1">
+<script src="{{ url_for('static', filename='js/app.js') }}?v=1" defer></script>
+</head>
+<body class="admin">
+{% from "partials/macros.html" import status, img with context %}
+<div class="adm-top"><div class="container">
+  <strong>{{ S.store_name }} · ADMIN</strong>
+  <span class="inline"><span class="small">{{ g.user.name }} ({{ g.user.role }})</span> <a class="small" href="{{ url_for('shop.home') }}" target="_blank" rel="noopener">View store ↗</a>
+  <form method="post" action="{{ url_for('auth.logout') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="link-btn small adm-out">Sign out</button></form></span>
+</div></div>
+<div class="adm-shell">
+  <nav class="adm-nav" aria-label="Admin">
+    {% set nav_items = [('admin.dashboard','Dashboard','admin.access'),('admin.orders','Orders','orders.view'),('admin.products','Products','products.view'),('admin.inventory','Inventory','inventory.manage'),
+       ('admin.collections','Collections','collections.manage'),('admin.reviews','Reviews','reviews.moderate'),('admin.messages','Messages','messages.view'),('admin.customers','Customers','customers.view'),
+       ('admin.coupons','Coupons','coupons.manage'),('admin.pincodes','PIN rules','settings.manage'),('admin.settings','Settings','settings.manage'),('admin.team','Team','team.manage'),
+       ('admin.outbox','Outbox','settings.manage'),('admin.audit','Audit log','settings.manage')] %}
+    {% set grp = {'admin.orders':['admin.orders','admin.order_detail','admin.order_receipt'],'admin.products':['admin.products','admin.product_edit'],'admin.customers':['admin.customers']} %}
+    {% for ep, label, perm in nav_items %}{% if can(perm) %}<a class="{{ 'cur' if request.endpoint in grp.get(ep, [ep]) }}" href="{{ url_for(ep) }}">{{ label }}</a>{% endif %}{% endfor %}
+  </nav>
+  <main class="adm-main"><div class="container">
+    {% with msgs = get_flashed_messages(with_categories=true) %}{% if msgs %}<div class="flashes" role="status">{% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+    {% block content %}{% endblock %}
+  </div></main>
+</div>
+</body>
+</html>

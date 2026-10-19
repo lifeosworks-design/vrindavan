@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}About us — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section"><div class="prose">
+<h1>About us</h1>
+<p>{{ S.store_name }} is a small online store for murtis for the home mandir.</p>
+<p>This page will tell our story once we have real photographs, makers and sourcing details to share. We only publish statements we can back up — about materials, making and origin.</p>
+<p>Questions in the meantime? <a href="{{ url_for('shop.contact') }}">Write to us</a>.</p>
+</div></div>
+{% endblock %}

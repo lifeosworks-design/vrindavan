@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import field with context %}
+{% block title %}Create account — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow">
+  <h1>Create your account</h1>
+  <form method="post" class="card-box" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    {{ field('name', 'Full name', form, errors, required=true, autocomplete='name') }}
+    {{ field('email', 'Email', form, errors, type='email', required=true, autocomplete='email') }}
+    {{ field('phone', 'Mobile (optional)', form, errors, type='tel', attrs='inputmode="numeric" maxlength="10"', autocomplete='tel-national') }}
+    {{ field('password', 'Password', form, errors, type='password', required=true, autocomplete='new-password', hint='At least 10 characters, with letters and numbers.') }}
+    <label class="check"><input type="checkbox" name="marketing" value="1"> Send me occasional updates (you can change this later)</label>
+    <p></p>
+    <button class="btn btn-block" type="submit">Create account</button>
+  </form>
+  <p class="center">Already registered? <a href="{{ url_for('auth.login', next=request.args.get('next')) }}">Sign in</a></p>
+</div>
+{% endblock %}

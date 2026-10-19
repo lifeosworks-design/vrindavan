@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import field with context %}
+{% block title %}Profile — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section">
+  <h1>Profile</h1>{% include "account/_nav.html" %}
+  <form method="post" class="card-box" novalidate><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="details">
+    <h2>Your details</h2>
+    {% set form = {'name': g.user.name, 'phone': g.user.phone or ''} %}
+    {{ field('name', 'Full name', form, errors, required=true) }}
+    <div class="field"><label for="em">Email</label><input id="em" value="{{ g.user.email }}" disabled></div>
+    {{ field('phone', 'Mobile', form, errors, type='tel', attrs='inputmode="numeric" maxlength="10"') }}
+    <label class="check"><input type="checkbox" name="marketing" value="1" {{ 'checked' if g.user.marketing_opt_in }}> Send me occasional updates</label><p></p>
+    <button class="btn" type="submit">Save</button>
+  </form>
+  <form method="post" class="card-box" novalidate><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="password">
+    <h2>Change password</h2>
+    {{ field('current', 'Current password', {}, errors, type='password', autocomplete='current-password') }}
+    {{ field('password', 'New password', {}, errors, type='password', autocomplete='new-password', hint='At least 10 characters, with letters and numbers.') }}
+    <button class="btn" type="submit">Change password</button>
+  </form>
+</div>
+{% endblock %}

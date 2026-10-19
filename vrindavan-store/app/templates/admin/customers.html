@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<h1>Customers</h1>
+<form class="filters-row" method="get"><label class="sr-only" for="q">Search</label><input id="q" type="search" name="q" value="{{ term }}" placeholder="Name, email or phone"><button class="btn btn-outline btn-sm">Search</button></form>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Customer</th><th>Contact</th><th class="n">Orders</th><th class="n">Spent</th><th>Joined</th><th>Status</th><th></th></tr></thead><tbody>
+{% for c in customers %}<tr><td>{{ c.name }}</td><td>{{ c.email }}<br><span class="muted small">{{ c.phone or '' }}</span></td><td class="n">{{ c.orders_n }}</td><td class="n">{{ c.spent|inr }}</td><td>{{ c.created_at|dt }}</td><td>{{ 'Active' if c.is_active else 'Disabled' }}</td>
+<td><form method="post" action="{{ url_for('admin.customer_toggle', uid=c.id) }}" data-confirm="{{ 'Disable' if c.is_active else 'Enable' }} this account?"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn btn-outline btn-sm">{{ 'Disable' if c.is_active else 'Enable' }}</button></form></td></tr>
+{% else %}<tr><td colspan="7" class="muted">No customers yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

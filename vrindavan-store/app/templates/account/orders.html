@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import status with context %}
+{% block title %}My orders — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section">
+  <h1>My orders</h1>{% include "account/_nav.html" %}
+  {% for o in orders %}<a class="order-card" href="{{ url_for('account.order_detail', order_no=o.order_no) }}"><div class="inline justify"><strong>{{ o.order_no }}</strong>{{ status(o.status) }}</div><div class="muted small">{{ o.created_at|dt }} · {{ o.total|inr }} · {{ 'COD' if o.payment_method == 'cod' else 'Online' }}</div></a>
+  {% else %}<div class="empty"><p>You haven't placed an order yet.</p><a class="btn" href="{{ url_for('shop.shop_all') }}">Browse murtis</a></div>{% endfor %}
+</div>
+{% endblock %}

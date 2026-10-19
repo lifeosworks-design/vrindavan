@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import status, img with context %}
+{% block title %}Order {{ o.order_no }} — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section">
+  <p><a href="{{ url_for('account.orders') }}">← All orders</a></p>
+  <h1>Order {{ o.order_no }} {{ status(o.status) }}</h1>
+  <div class="stack-2">
+    <div>
+      <div class="card-box"><h2>Items</h2>
+        {% for it in items %}<div class="cart-line"><div class="thumb">{% if it.image_base %}{{ img(it.image_base, it.title, sizes='84px') }}{% endif %}</div><div><strong>{% if it.slug and it.product_id %}<a href="{{ url_for('shop.product', slug=it.slug) }}">{{ it.title }}</a>{% else %}{{ it.title }}{% endif %}</strong><div class="muted small">Qty {{ it.qty }} × {{ it.unit_price|inr }}</div><div>{{ it.line_total|inr }}</div></div></div>{% endfor %}
+      </div>
+      <div class="card-box"><h2>Progress</h2>
+        <ul class="timeline">{% for e in events %}<li><strong>{{ e.status|capitalize }}</strong>{% if e.note %} — {{ e.note }}{% endif %}<br><span class="muted small">{{ e.created_at|dt }}</span></li>{% endfor %}</ul>
+        {% if o.courier or o.awb %}<p>Courier: <strong>{{ o.courier or '—' }}</strong> · Tracking no.: <strong>{{ o.awb or '—' }}</strong>{% if o.tracking_url and o.tracking_url.startswith('https://') %} · <a href="{{ o.tracking_url }}" target="_blank" rel="noopener nofollow">Track with courier</a>{% endif %}</p>{% endif %}
+      </div>
+    </div>
+    <aside class="summary">
+      <dl><div class="r"><dt>Subtotal</dt><dd>{{ o.subtotal|inr }}</dd></div>{% if o.discount %}<div class="r"><dt>Discount</dt><dd>−{{ o.discount|inr }}</dd></div>{% endif %}
+      <div class="r"><dt>Shipping</dt><dd>{{ 'Free' if not o.shipping_fee else o.shipping_fee|inr }}</dd></div>{% if o.cod_fee %}<div class="r"><dt>COD fee</dt><dd>{{ o.cod_fee|inr }}</dd></div>{% endif %}
+      <div class="r total"><dt>Total</dt><dd>{{ o.total|inr }}</dd></div></dl>
+      <p class="small">{{ 'Cash on delivery' if o.payment_method == 'cod' else 'Online payment' }} · {{ status(o.payment_status) }}</p>
+      <p class="small"><strong>Delivering to</strong><br>{{ o.ship_name }}<br>{{ o.ship_line1 }}{% if o.ship_line2 %}, {{ o.ship_line2 }}{% endif %}<br>{{ o.ship_city }}, {{ o.ship_state }} {{ o.ship_pincode }}</p>
+      <a class="btn btn-outline btn-block" href="{{ url_for('account.receipt', order_no=o.order_no) }}">View receipt</a>
+      {% if o.status in ('pending', 'confirmed') %}
+      <form method="post" action="{{ url_for('account.cancel_order', order_no=o.order_no) }}" data-confirm="Cancel this order?"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn btn-ghost btn-block">Cancel order</button></form>{% endif %}
+      <p class="small muted center">Need help? <a href="{{ url_for('shop.contact') }}">Contact us</a> with your order number.</p>
+    </aside>
+  </div>
+</div>
+{% endblock %}

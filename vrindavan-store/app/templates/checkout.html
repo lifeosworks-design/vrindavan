@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}Checkout — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow-wide">
+  <div class="page-head"><h1>Checkout</h1><p class="muted small">No account needed. {% if not g.user %}Already have one? <a href="{{ url_for('auth.login', next=url_for('checkout.checkout')) }}">Sign in</a>.{% endif %}</p></div>
+  <form id="checkout-form" method="post" action="{{ url_for('checkout.checkout') }}" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="co_token" value="{{ co_token }}">
+    <div class="stack-2">
+      <div class="stack">
+        <section class="co-section"><h2>Contact</h2>
+          <div class="form-grid">
+            {{ field('name', 'Full name', form, errors, required=true, autocomplete='name') }}
+            {{ field('phone', 'Mobile number', form, errors, type='tel', attrs='inputmode="numeric" maxlength="10"', required=true, autocomplete='tel-national', hint='10 digits. We use it only for delivery updates.') }}
+          </div>
+          {{ field('email', 'Email', form, errors, type='email', required=true, autocomplete='email', hint='Order updates are sent here.') }}
+        </section>
+        <section class="co-section"><h2>Delivery address</h2>
+          {{ field('line1', 'House / flat, street', form, errors, required=true, autocomplete='address-line1') }}
+          {{ field('line2', 'Area / locality (optional)', form, errors, autocomplete='address-line2') }}
+          {{ field('landmark', 'Landmark (optional)', form, errors) }}
+          <div class="form-grid">
+            {{ field('pincode', 'PIN code', form, errors, attrs='inputmode="numeric" maxlength="6"', required=true, autocomplete='postal-code') }}
+            {{ field('city', 'City', form, errors, required=true, autocomplete='address-level2') }}
+          </div>
+          <div class="field {{ 'has-error' if errors.get('state') }}"><label for="state">State <span aria-hidden="true">*</span></label>
+            <select id="state" name="state" required autocomplete="address-level1"><option value="">Select state</option>{% for s in states %}<option {{ 'selected' if s == form.state }}>{{ s }}</option>{% endfor %}</select>
+            {% if errors.get('state') %}<div class="err">{{ errors.state }}</div>{% endif %}</div>
+          <p id="block-all" class="warnbox" {% if not t.block_all %}hidden{% endif %}>We are not able to deliver to this PIN code yet.</p>
+          {% if g.user %}<label class="check"><input type="checkbox" name="save_address" value="1" checked> Save this address to my account</label>{% endif %}
+        </section>
+        <section class="co-section"><h2>Payment</h2>
+          <label class="radio-card {{ 'disabled' if not t.cod_ok }}"><input id="pm-cod" type="radio" name="payment_method" value="cod" {{ 'checked' if form.payment_method == 'cod' and t.cod_ok }} {{ 'disabled' if not t.cod_ok }}>
+            <span><b>Cash on delivery</b><span class="muted small">Pay when your order arrives{% if S.cod_fee|int %} · handling fee {{ S.cod_fee|int|inr }}{% endif %}.</span></span></label>
+          <p id="cod-note" class="small muted" {% if t.cod_ok %}hidden{% endif %}>{{ t.cod_reason }}</p>
+          <label class="radio-card {{ 'disabled' if S.online_enabled != '1' }}"><input id="pm-online" type="radio" name="payment_method" value="online" {{ 'disabled' if S.online_enabled != '1' }} {{ 'checked' if S.online_enabled == '1' and form.payment_method == 'online' }}>
+            <span><b>UPI, cards &amp; net banking</b><span class="muted small">{% if S.online_enabled == '1' %}Pay securely online.{% else %}Not available yet — coming soon.{% endif %}</span></span></label>
+          {% if errors.get('payment_method') %}<div class="field has-error"><div class="err">{{ errors.payment_method }}</div></div>{% endif %}
+        </section>
+        <section class="co-section"><h2>Note (optional)</h2>
+          <div class="field"><label class="sr-only" for="customer_note">Note for delivery</label><textarea id="customer_note" name="customer_note" maxlength="400" placeholder="Anything we should know for delivery?">{{ form.customer_note }}</textarea></div>
+        </section>
+      </div>
+      <aside class="summary">
+        <h2>Your order</h2>
+        {% for l in lines %}<div class="cart-line"><div class="thumb">{% if l.img %}{{ img(l.img, l.product.title, sizes='84px') }}{% endif %}</div><div><strong>{{ l.product.title }}</strong><div class="muted small">Qty {{ l.qty }}</div><div>{{ l.line_total|inr }}</div></div></div>{% endfor %}
+        <dl>
+          <div class="r"><dt>Subtotal</dt><dd data-t="subtotal">{{ t.subtotal|inr }}</dd></div>
+          <div class="r" data-row="discount" {% if not t.discount %}hidden{% endif %}><dt>Discount</dt><dd>−<span data-t="discount">{{ t.discount|inr }}</span></dd></div>
+          <div class="r"><dt>Shipping</dt><dd data-t="shipping">{{ 'Free' if not t.shipping else t.shipping|inr }}</dd></div>
+          <div class="r" data-row="cod_fee" {% if not t.cod_fee %}hidden{% endif %}><dt>COD handling fee</dt><dd data-t="cod_fee">{{ t.cod_fee|inr }}</dd></div>
+          <div class="r total"><dt>Total</dt><dd data-t="total">{{ t.total|inr }}</dd></div>
+        </dl>
+        <p class="small muted">{{ S.delivery_note }}</p>
+        <button class="btn btn-block" type="submit">Place order</button>
+        <p class="small muted center">By placing your order you agree to our <a href="{{ url_for('shop.page', slug='terms') }}">terms</a> and <a href="{{ url_for('shop.page', slug='privacy') }}">privacy policy</a>.</p>
+      </aside>
+    </div>
+  </form>
+</div>
+{% endblock %}

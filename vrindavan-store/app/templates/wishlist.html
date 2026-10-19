@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}Wishlist — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section">
+  <h1>Your wishlist</h1>
+  {% if products %}<div class="grid">{% for p in products %}{{ card(p) }}{% endfor %}</div>
+  {% else %}<div class="empty"><p>Nothing saved yet. Tap the heart on any murti to keep it here.</p><a class="btn" href="{{ url_for('shop.shop_all') }}">Browse murtis</a></div>{% endif %}
+  {% if not g.user and products %}<p class="muted small">Sign in to keep your wishlist on every device. <a href="{{ url_for('auth.login', next=url_for('shop.wishlist')) }}">Sign in</a></p>{% endif %}
+</div>
+{% endblock %}

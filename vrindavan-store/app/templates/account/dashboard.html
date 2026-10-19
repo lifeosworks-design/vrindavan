@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import status with context %}
+{% block title %}My account — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section">
+  <h1>Hello, {{ g.user.name.split(' ')[0] }}</h1>
+  {% include "account/_nav.html" %}
+  {% if can('admin.access') %}<p><a class="btn btn-outline btn-sm" href="{{ url_for('admin.dashboard') }}">Open admin panel</a></p>{% endif %}
+  <h2>Recent orders</h2>
+  {% for o in orders %}<a class="order-card" href="{{ url_for('account.order_detail', order_no=o.order_no) }}"><div class="inline justify"><strong>{{ o.order_no }}</strong>{{ status(o.status) }}</div><div class="muted small">{{ o.created_at|dt }} · {{ o.total|inr }}</div></a>
+  {% else %}<p class="muted">No orders yet. <a href="{{ url_for('shop.shop_all') }}">Start browsing</a>.</p>{% endfor %}
+  {% if orders %}<p><a href="{{ url_for('account.orders') }}">See all orders</a></p>{% endif %}
+  <p class="muted">{{ wl }} item{{ '' if wl == 1 else 's' }} in your <a href="{{ url_for('shop.wishlist') }}">wishlist</a>.</p>
+  <form method="post" action="{{ url_for('auth.logout') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn btn-outline">Sign out</button></form>
+</div>
+{% endblock %}

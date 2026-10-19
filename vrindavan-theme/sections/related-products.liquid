@@ -1,0 +1,33 @@
+{%- liquid
+  assign source = nil
+  for c in product.collections
+    if c.handle != 'all' and c.handle != 'frontpage'
+      assign source = c
+      break
+    endif
+  endfor
+  assign shown = 0
+-%}
+{%- if source != blank -%}
+<section class="container section-pad" {{ section.shopify_attributes }}>
+  <div class="sec-head"><div><h2>{{ section.settings.heading }}</h2></div></div>
+  <div class="grid">
+    {%- for p in source.products limit: 8 -%}
+      {%- if p.id != product.id and shown < section.settings.count -%}
+        {% render 'product-card', product: p %}
+        {%- assign shown = shown | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Related products",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "range", "id": "count", "label": "Products to show", "min": 2, "max": 8, "step": 2, "default": 4 }
+  ]
+}
+{% endschema %}

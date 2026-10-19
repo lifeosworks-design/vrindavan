@@ -1,0 +1,74 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "Murtis for the home mandir",
+        "heading": "Bring the mandir home.",
+        "subheading": "Browse by deity, material or occasion.",
+        "button_label": "Shop all murtis"
+      }
+    },
+    "marquee": {
+      "type": "marquee",
+      "blocks": {
+        "m1": { "type": "item", "settings": { "text": "Ganesha · गणेश" } },
+        "m2": { "type": "item", "settings": { "text": "Krishna · कृष्ण" } },
+        "m3": { "type": "item", "settings": { "text": "Lakshmi · लक्ष्मी" } },
+        "m4": { "type": "item", "settings": { "text": "Shiva · शिव" } },
+        "m5": { "type": "item", "settings": { "text": "Hanuman · हनुमान" } },
+        "m6": { "type": "item", "settings": { "text": "Durga · दुर्गा" } }
+      },
+      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"],
+      "settings": {}
+    },
+    "deities": {
+      "type": "deity-rail",
+      "blocks": {
+        "d1": { "type": "deity", "settings": { "collection": "ganesha", "native_name": "गणेश", "colour": "ganesha" } },
+        "d2": { "type": "deity", "settings": { "collection": "krishna", "native_name": "कृष्ण", "colour": "krishna" } },
+        "d3": { "type": "deity", "settings": { "collection": "lakshmi", "native_name": "लक्ष्मी", "colour": "lakshmi" } },
+        "d4": { "type": "deity", "settings": { "collection": "hanuman", "native_name": "हनुमान", "colour": "hanuman" } }
+      },
+      "block_order": ["d1", "d2", "d3", "d4"],
+      "settings": {
+        "eyebrow": "Find your deity",
+        "heading": "Shop by deity"
+      }
+    },
+    "featured": {
+      "type": "featured-products",
+      "settings": {
+        "eyebrow": "Handpicked for you",
+        "heading": "Featured murtis",
+        "count": 8,
+        "show_view_all": true
+      }
+    },
+    "festival": {
+      "type": "festival-band",
+      "blocks": {
+        "b1": { "type": "button", "settings": { "label": "Home mandir" } },
+        "b2": { "type": "button", "settings": { "label": "Gifting" } },
+        "b3": { "type": "button", "settings": { "label": "Festivals" } }
+      },
+      "block_order": ["b1", "b2", "b3"],
+      "settings": {
+        "eyebrow": "For every occasion",
+        "heading": "Festivals, gifting & home mandir",
+        "text": "Find the right murti for Diwali, a housewarming or your daily puja."
+      }
+    },
+    "promise": {
+      "type": "promise",
+      "blocks": {
+        "p1": { "type": "card", "settings": { "icon": "truck", "heading": "Delivery & payment", "text": "Delivery time is confirmed for your PIN code after you place the order." } },
+        "p2": { "type": "card", "settings": { "icon": "shield", "heading": "If something is wrong", "text": "If a piece arrives damaged, tell us within 48 hours with photos." } },
+        "p3": { "type": "card", "settings": { "icon": "chat", "heading": "Need help choosing?", "text": "Tell us the space, the deity and your budget — send us a message." } }
+      },
+      "block_order": ["p1", "p2", "p3"],
+      "settings": {}
+    }
+  },
+  "order": ["hero", "marquee", "deities", "featured", "festival", "promise"]
+}

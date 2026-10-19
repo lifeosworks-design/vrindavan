@@ -1,0 +1,44 @@
+{%- paginate search.results by 24 -%}
+<section class="page-hero" {{ section.shopify_attributes }}>
+  <div class="container">
+    <h1>{% if search.performed %}Search: {{ search.terms | escape }}{% else %}Search{% endif %}</h1>
+    {%- if search.performed -%}<p class="muted small">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %}</p>{%- endif -%}
+  </div>
+</section>
+<div class="container">
+  <form class="search-form search-page-form" action="{{ routes.search_url }}" method="get" role="search">
+    <input type="hidden" name="type" value="product">
+    <label class="visually-hidden" for="page-search">Search</label>
+    <input id="page-search" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search murtis" maxlength="80">
+    <button class="btn" type="submit">Search</button>
+  </form>
+  {%- if search.performed -%}
+    {%- if search.results.size > 0 -%}
+      <div class="grid section">
+        {%- for item in search.results -%}
+          {%- if item.object_type == 'product' -%}{% render 'product-card', product: item %}{%- endif -%}
+        {%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="Pages">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" aria-label="Previous page">←</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}<span class="current" aria-current="page">{{ part.title }}</span>
+            {%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}" aria-label="Next page">→</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- else -%}
+      <div class="empty-state"><p>Nothing matched “{{ search.terms | escape }}”. Try a deity name such as Ganesha, or a material such as brass.</p></div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Search results"
+}
+{% endschema %}

@@ -1,0 +1,38 @@
+{% extends "admin/base.html" %}
+{% block title %}Order {{ o.order_no }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('admin.orders') }}">← Orders</a></p>
+<div class="inline justify"><h1>{{ o.order_no }} {{ status(o.status) }}</h1><a class="btn btn-outline btn-sm" href="{{ url_for('admin.order_receipt', order_no=o.order_no) }}" target="_blank" rel="noopener">Print receipt / packing slip</a></div>
+<div class="stack-2">
+  <div>
+    <div class="panel"><h2>Items</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Item</th><th class="n">Qty</th><th class="n">Price</th><th class="n">Total</th>{% if can('products.edit') %}<th class="n">Cost</th>{% endif %}</tr></thead><tbody>
+      {% for it in items %}<tr><td>{{ it.title }}{% if it.hsn_snapshot %}<br><span class="muted small">HSN {{ it.hsn_snapshot }}{% if it.gst_snapshot is not none %} · GST {{ '%g'|format(it.gst_snapshot) }}%{% endif %}</span>{% endif %}</td><td class="n">{{ it.qty }}</td><td class="n">{{ it.unit_price|inr }}</td><td class="n">{{ it.line_total|inr }}</td>{% if can('products.edit') %}<td class="n">{% if it.cost_snapshot is not none %}{{ (it.cost_snapshot * it.qty)|inr }}{% else %}—{% endif %}</td>{% endif %}</tr>{% endfor %}
+      </tbody></table></div>
+      <dl class="kv"><dt>Subtotal</dt><dd>{{ o.subtotal|inr }}</dd>{% if o.discount %}<dt>Discount {{ o.coupon_code or '' }}</dt><dd>−{{ o.discount|inr }}</dd>{% endif %}<dt>Shipping</dt><dd>{{ o.shipping_fee|inr }}</dd>{% if o.cod_fee %}<dt>COD fee</dt><dd>{{ o.cod_fee|inr }}</dd>{% endif %}<dt><strong>Total</strong></dt><dd><strong>{{ o.total|inr }}</strong></dd></dl>
+    </div>
+    <div class="panel"><h2>Timeline</h2><ul class="timeline">{% for e in events %}<li><strong>{{ e.status|capitalize }}</strong>{% if e.note %} — {{ e.note }}{% endif %}<br><span class="muted small">{{ e.created_at|dt }}{% if e.uname %} · {{ e.uname }}{% endif %}</span></li>{% endfor %}</ul></div>
+  </div>
+  <div>
+    <div class="panel"><h2>Customer</h2><p><strong>{{ o.customer_name }}</strong><br>{{ o.phone }}<br>{{ o.email }}</p>
+      <p><strong>Ship to</strong><br>{{ o.ship_name }} · {{ o.ship_phone }}<br>{{ o.ship_line1 }}{% if o.ship_line2 %}, {{ o.ship_line2 }}{% endif %}{% if o.ship_landmark %}<br>Near {{ o.ship_landmark }}{% endif %}<br>{{ o.ship_city }}, {{ o.ship_state }} {{ o.ship_pincode }}</p>
+      {% if o.customer_note %}<p class="warnbox"><strong>Customer note:</strong> {{ o.customer_note }}</p>{% endif %}</div>
+    <div class="panel"><h2>Payment</h2><p>{{ o.payment_method|upper }} · {{ status(o.payment_status) }}</p>
+      <form method="post" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="payment"><label class="sr-only" for="ps">Payment status</label>
+        <select id="ps" name="payment_status" class="w-lg">{% for s in ['pending','paid','failed','refunded'] %}<option {{ 'selected' if s == o.payment_status }}>{{ s }}</option>{% endfor %}</select><button class="btn btn-outline btn-sm">Update</button></form>
+      {% if o.payment_method == 'cod' %}<form method="post" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="cod_confirm"><input type="hidden" name="value" value="{{ 0 if o.cod_confirmed else 1 }}"><p>COD confirmed with customer: <strong>{{ 'Yes' if o.cod_confirmed else 'No' }}</strong> <button class="btn btn-outline btn-sm">{{ 'Mark unconfirmed' if o.cod_confirmed else 'Mark confirmed' }}</button></p></form>{% endif %}</div>
+    <div class="panel"><h2>Update status</h2>
+      {% if nexts %}<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="status">
+        <div class="field"><label for="st">Move to</label><select id="st" name="status">{% for s in nexts %}<option>{{ s }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="co">Courier (needed for “shipped”)</label><input id="co" name="courier" value="{{ o.courier or '' }}"></div>
+        <div class="field"><label for="aw">AWB / tracking no. (needed for “shipped”)</label><input id="aw" name="awb" value="{{ o.awb or '' }}"></div>
+        <div class="field"><label for="tu">Tracking URL (https://…)</label><input id="tu" name="tracking_url" value="{{ o.tracking_url or '' }}"></div>
+        <div class="field"><label for="nt">Note (visible in timeline)</label><input id="nt" name="note" maxlength="300"></div>
+        <button class="btn" type="submit">Apply</button>
+        <p class="hint">Cancelling returns stock automatically (unless the order already shipped — then adjust stock manually after inspecting the return).</p></form>
+      {% else %}<p class="muted">This order is closed.</p>{% endif %}</div>
+    <div class="panel"><h2>Shipping details</h2><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="shipping">
+      <div class="field"><label for="co2">Courier</label><input id="co2" name="courier" value="{{ o.courier or '' }}"></div><div class="field"><label for="aw2">AWB</label><input id="aw2" name="awb" value="{{ o.awb or '' }}"></div><div class="field"><label for="tu2">Tracking URL</label><input id="tu2" name="tracking_url" value="{{ o.tracking_url or '' }}"></div><button class="btn btn-outline btn-sm">Save</button></form></div>
+    <div class="panel"><h2>Internal note</h2><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="note"><div class="field"><label class="sr-only" for="in">Internal note</label><textarea id="in" name="internal_note" maxlength="1000">{{ o.internal_note or '' }}</textarea></div><button class="btn btn-outline btn-sm">Save note</button></form></div>
+  </div>
+</div>
+{% endblock %}

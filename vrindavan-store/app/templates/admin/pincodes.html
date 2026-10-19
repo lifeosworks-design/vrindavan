@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block title %}PIN rules{% endblock %}
+{% block content %}
+<h1>PIN-code rules</h1>
+<p class="muted">Rules match by prefix (1–6 digits). Use them to switch off COD, decline delivery, or add a delivery charge for areas you cannot serve well. Courier-confirmed lists should replace these once you have real serviceability data.</p>
+<div class="panel"><form method="post" class="form-grid three"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <div class="field"><label for="pf">PIN prefix</label><input id="pf" name="prefix" inputmode="numeric" maxlength="6" required placeholder="19 or 194101"></div>
+  <div class="field"><label for="rl">Rule</label><select id="rl" name="rule"><option value="block_cod">No cash on delivery</option><option value="block_all">Do not deliver</option><option value="surcharge">Extra delivery charge</option></select></div>
+  <div class="field"><label for="sc">Extra charge ₹ (surcharge only)</label><input id="sc" name="surcharge" type="number" min="0" value="0"></div>
+  <div class="field"><label for="nt">Note</label><input id="nt" name="note" maxlength="200"></div><div><button class="btn">Add rule</button></div></form></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Prefix</th><th>Rule</th><th class="n">Charge</th><th>Note</th><th></th></tr></thead><tbody>
+{% for r in rules %}<tr><td>{{ r.prefix }}</td><td>{{ r.rule }}</td><td class="n">{{ r.surcharge|inr if r.rule == 'surcharge' else '—' }}</td><td>{{ r.note or '' }}</td><td><form method="post" data-confirm="Delete rule?"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ r.id }}"><button class="btn btn-ghost btn-sm">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="5" class="muted">No rules — every PIN code is treated the same.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

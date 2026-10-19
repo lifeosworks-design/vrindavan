@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Terms of use — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section"><div class="prose">
+<h1>Terms of use</h1>
+{% if S.policies_reviewed != "1" %}<div class="draft-note">Draft — this page has not yet been reviewed by a legal adviser and will be finalised before launch.</div>{% endif %}
+<p>By using this site and placing an order you agree to these terms. Prices are in Indian rupees. We may cancel an order if an item is unavailable or a pricing error occurs; any payment made will be refunded.</p>
+<p>Full terms will be finalised with a legal adviser before launch.</p>
+</div></div>
+{% endblock %}

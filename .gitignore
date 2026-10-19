@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+vrindavan-store/instance/
+vrindavan-store/pytest_out.txt
+*.zip
+.env
+.claude/

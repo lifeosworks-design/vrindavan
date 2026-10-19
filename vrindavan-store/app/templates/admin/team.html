@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block title %}Team{% endblock %}
+{% block content %}
+<h1>Team &amp; permissions</h1>
+<div class="panel"><h2>Roles</h2><ul><li><strong>Admin</strong> — everything, including settings, customers, coupons, team and audit log.</li><li><strong>Staff</strong> — orders (view/update), products (add/edit, no delete), inventory, review moderation and messages. No settings, customer list, coupons or team access.</li><li><strong>Customer</strong> — storefront and their own account only.</li></ul></div>
+<div class="panel"><h2>Add a team member</h2><form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="create">
+  <div class="field"><label for="tn">Name</label><input id="tn" name="name" required></div>
+  <div class="field"><label for="te">Email</label><input id="te" name="email" type="email" required autocomplete="off"></div>
+  <div class="field"><label for="tr">Role</label><select id="tr" name="role"><option value="staff">Staff</option><option value="admin">Admin</option></select></div>
+  <div class="field"><label for="tp">Temporary password</label><input id="tp" name="password" type="password" required autocomplete="new-password"><div class="hint">10+ characters. Ask them to change it after signing in.</div></div>
+  <div><button class="btn">Create account</button></div></form></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last sign-in</th><th>Actions</th></tr></thead><tbody>
+{% for u in team %}<tr><td>{{ u.name }}{% if u.id == g.user.id %} <span class="muted small">(you)</span>{% endif %}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ 'Active' if u.is_active else 'Disabled' }}</td><td>{{ (u.last_login_at or '—')|dt }}</td>
+<td>{% if u.id != g.user.id %}<div class="inline">
+  <form method="post" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ u.id }}"><input type="hidden" name="action" value="role"><label class="sr-only" for="r{{ u.id }}">Role</label><select id="r{{ u.id }}" name="role" class="w-sm"><option value="staff" {{ 'selected' if u.role == 'staff' }}>staff</option><option value="admin" {{ 'selected' if u.role == 'admin' }}>admin</option></select><button class="btn btn-outline btn-sm">Set</button></form>
+  <form method="post" data-confirm="{{ 'Disable' if u.is_active else 'Enable' }} this account?"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ u.id }}"><input type="hidden" name="action" value="toggle"><button class="btn btn-ghost btn-sm">{{ 'Disable' if u.is_active else 'Enable' }}</button></form>
+  <form method="post" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ u.id }}"><input type="hidden" name="action" value="reset"><label class="sr-only" for="p{{ u.id }}">New password</label><input id="p{{ u.id }}" name="password" type="password" placeholder="New password" class="w-lg" autocomplete="new-password"><button class="btn btn-outline btn-sm">Reset</button></form>
+</div>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

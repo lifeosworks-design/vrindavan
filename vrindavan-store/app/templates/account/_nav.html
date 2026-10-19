@@ -1,0 +1,4 @@
+<nav class="acct-nav" aria-label="Account">
+  {% for ep, label in [('account.dashboard','Overview'),('account.orders','Orders'),('shop.wishlist','Wishlist'),('account.addresses','Addresses'),('account.profile','Profile')] %}
+  <a class="chip {{ 'cur' if request.endpoint == ep }}" href="{{ url_for(ep) }}">{{ label }}</a>{% endfor %}
+</nav>

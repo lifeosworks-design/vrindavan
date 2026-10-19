@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+{% block title %}Reviews{% endblock %}
+{% block content %}
+<h1>Reviews</h1>
+<div class="pills">{% for k, l in [('pending','Pending'),('approved','Approved'),('rejected','Rejected'),('','All')] %}<a class="{{ 'cur' if status == k }}" href="{{ url_for('admin.reviews', status=k) }}">{{ l }}</a>{% endfor %}</div>
+{% for r in reviews %}<div class="panel"><div class="inline justify"><strong>{{ r.ptitle }}</strong>{{ status(r.status) }}</div>
+  <div class="stars">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</div>{% if r.title %}<strong>{{ r.title }}</strong>{% endif %}<p>{{ r.body }}</p>
+  <p class="muted small">{{ r.uname }} ({{ r.uemail }}) · {{ r.created_at|dt }} · verified purchase</p>
+  <form method="post" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ r.id }}">
+    <button class="btn btn-sm" name="action" value="approved">Approve</button><button class="btn btn-outline btn-sm" name="action" value="rejected">Reject</button>{% if can('products.delete') %}<button class="btn btn-ghost btn-sm" name="action" value="delete">Delete</button>{% endif %}</form></div>
+{% else %}<p class="muted">Nothing here.</p>{% endfor %}
+{% endblock %}

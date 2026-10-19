@@ -1,0 +1,73 @@
+<footer class="site-footer jali" {{ section.shopify_attributes }}>
+  <div class="container">
+    <div class="foot-brand">
+      {%- if section.settings.emblem != blank -%}
+        {{ section.settings.emblem | image_url: width: 240 | image_tag: width: 110, height: 110, alt: '', loading: 'lazy' }}
+      {%- else -%}
+        <img src="{{ 'emblem.webp' | asset_url }}" width="480" height="480" alt="" loading="lazy">
+      {%- endif -%}
+      <div>
+        <strong class="foot-name">{{ shop.name }}</strong><br>
+        {%- if section.settings.tagline != blank -%}<span class="small foot-tag">{{ section.settings.tagline }}</span>{%- endif -%}
+      </div>
+    </div>
+
+    <div class="foot-cols">
+      {%- for block in section.blocks -%}
+        {%- assign m = linklists[block.settings.menu] -%}
+        <div {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.heading }}</h3>
+          <ul>
+            {%- for link in m.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+          </ul>
+        </div>
+      {%- endfor -%}
+      <div>
+        <h3>Information</h3>
+        <ul>
+          <li><a href="{{ pages.about.url }}">About</a></li>
+          <li><a href="{{ pages.contact.url }}">Contact</a></li>
+          <li><a href="{{ pages.faq.url }}">Questions</a></li>
+          {%- if shop.shipping_policy.url != blank -%}<li><a href="{{ shop.shipping_policy.url }}">Shipping policy</a></li>{%- endif -%}
+          {%- if shop.refund_policy.url != blank -%}<li><a href="{{ shop.refund_policy.url }}">Returns &amp; refunds</a></li>{%- endif -%}
+          {%- if shop.privacy_policy.url != blank -%}<li><a href="{{ shop.privacy_policy.url }}">Privacy policy</a></li>{%- endif -%}
+          {%- if shop.terms_of_service.url != blank -%}<li><a href="{{ shop.terms_of_service.url }}">Terms of service</a></li>{%- endif -%}
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      {%- if settings.legal_name != blank or settings.business_address != blank or settings.support_email != blank or settings.support_phone != blank -%}
+        <p>
+          {{ settings.legal_name }}
+          {%- if settings.business_address != blank %} · {{ settings.business_address | strip_newlines }}{% endif -%}
+          {%- if settings.support_email != blank %} · <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>{% endif -%}
+          {%- if settings.support_phone != blank %} · {{ settings.support_phone }}{% endif -%}
+          {%- if settings.gstin != blank %} · GSTIN {{ settings.gstin }}{% endif -%}
+        </p>
+      {%- endif -%}
+      <p>© {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "image_picker", "id": "emblem", "label": "Emblem", "info": "Leave empty to use the Vrindavan emblem that ships with the theme." },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Murtis for the home mandir" }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    }
+  ]
+}
+{% endschema %}

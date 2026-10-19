@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import field with context %}
+{% block title %}Contact us — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow">
+  <h1>Contact us</h1>
+  <p class="muted">{% if S.support_email or S.support_phone %}{% if S.support_email %}Email <a href="mailto:{{ S.support_email }}">{{ S.support_email }}</a>. {% endif %}{% if S.support_phone %}Call {{ S.support_phone }}. {% endif %}{% endif %}Or send a message and we will reply.</p>
+  <form method="post" class="card-box" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+    {{ field('name', 'Your name', form, errors, required=true, autocomplete='name') }}
+    {{ field('email', 'Email', form, errors, type='email', autocomplete='email') }}
+    {{ field('phone', 'Mobile', form, errors, type='tel', attrs='inputmode="numeric" maxlength="10"', autocomplete='tel-national') }}
+    <div class="field {{ 'has-error' if errors.get('message') }}"><label for="message">Message <span aria-hidden="true">*</span></label><textarea id="message" name="message" required maxlength="2000">{{ form.get('message','') }}</textarea>{% if errors.get('message') %}<div class="err">{{ errors.message }}</div>{% endif %}</div>
+    <button class="btn btn-block" type="submit">Send message</button>
+  </form>
+</div>
+{% endblock %}

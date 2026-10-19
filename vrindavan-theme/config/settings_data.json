@@ -1,0 +1,16 @@
+{
+  "current": {
+    "free_shipping_threshold": 1499,
+    "delivery_note": "Delivery time is confirmed for your PIN code after you place the order.",
+    "cod_note": "",
+    "returns_summary": "If a piece arrives damaged, tell us within 48 hours with photos. See the returns policy for details."
+  },
+  "presets": {
+    "Vrindavan": {
+      "free_shipping_threshold": 1499,
+      "delivery_note": "Delivery time is confirmed for your PIN code after you place the order.",
+      "cod_note": "",
+      "returns_summary": "If a piece arrives damaged, tell us within 48 hours with photos. See the returns policy for details."
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}{{ p.seo_title or (p.title ~ ' — ' ~ S.store_name) }}{% endblock %}
+{% block desc %}{{ p.seo_description or p.description or p.title }}{% endblock %}
+{% block head %}
+<script type="application/ld+json">{{ ({"@context":"https://schema.org","@type":"Product","name":p.title,"description":p.description or p.title,
+  "image":[url_for('media', filename=images[0].base ~ '_1200.webp', _external=True)] if images else [],
+  "offers":{"@type":"Offer","priceCurrency":"INR","price":p.price,"availability":"https://schema.org/" ~ ("OutOfStock" if label == 'out' else "InStock")}}
+  | tojson) }}</script>
+{% endblock %}
+{% block content %}
+{% set out = label == 'out' %}
+<div class="container">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ url_for('shop.home') }}">Home</a> / <a href="{{ url_for('shop.shop_all') }}">Murtis</a>{% for c in cols if c.kind == 'deity' %} / <a href="{{ url_for('shop.collection', slug=c.slug) }}">{{ c.name }}</a>{% endfor %} / {{ p.title }}</nav>
+  {% if not p.is_active %}<div class="warnbox">This product is hidden from the store (admin preview).</div>{% endif %}
+  <div class="pdp">
+    <div class="gallery glow">
+      <div class="gallery-track" tabindex="0" aria-label="Product photos">
+        {% for im in images %}<div class="gallery-slide">{{ img(im.base, im.alt or p.title, sizes='(min-width:900px) 52vw, 88vw', eager=(loop.first)) }}</div>{% endfor %}
+        {% if not images %}<div class="gallery-slide"></div>{% endif %}
+      </div>
+      {% if images|length > 1 %}<div class="dots" aria-hidden="true">{% for im in images %}<i></i>{% endfor %}</div>
+      <div class="thumbs">{% for im in images %}<button type="button" aria-label="Show photo {{ loop.index }}">{{ img(im.base, '', sizes='72px') }}</button>{% endfor %}</div>{% endif %}
+      {% if images and images[0].is_placeholder %}<p class="small muted center">Sample illustration — real photographs to be added.</p>{% endif %}
+    </div>
+
+    <div class="buy">
+      <h1>{{ p.title }}</h1>
+      {% if p.subtitle %}<p class="sub">{{ p.subtitle }}</p>{% endif %}
+      {% if rev_count and rev_count >= (S.reviews_min_to_show_stars|int(3)) %}<p><a href="#reviews" class="stars">★ {{ '%.1f'|format(rev_avg) }}</a> <span class="muted small">({{ rev_count }} reviews)</span></p>{% endif %}
+      <div class="big-price">{{ p.price|inr }}{% if p.compare_at_price %}<s>{{ p.compare_at_price|inr }}</s>{% endif %}</div>
+      {% if demo_site and p.is_demo %}<p class="small muted">Sample listing — details are placeholders.</p>{% endif %}
+      {% if p.measured_by_us or p.photographed_by_us or p.protective_packing %}
+      <div class="evidence">{% if p.measured_by_us %}<span>Measured by us</span>{% endif %}{% if p.photographed_by_us %}<span>Photographed by us</span>{% endif %}{% if p.protective_packing %}<span>Protective packing</span>{% endif %}</div>{% endif %}
+
+      <div class="pin-box">
+        <label for="pin-input">Delivery to PIN code</label>
+        <div class="pin-row"><input id="pin-input" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" autocomplete="postal-code" data-product="{{ p.id }}"><button type="button" class="btn btn-outline btn-sm" id="pin-btn">Check</button></div>
+        <div class="pin-msg" id="pin-msg" aria-live="polite">{{ S.delivery_note }}</div>
+      </div>
+
+      {% if out %}
+        <button class="btn btn-block" disabled>Sold out</button>
+      {% else %}
+      <form class="buy-actions" method="post" action="{{ url_for('checkout.cart_add') }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="product_id" value="{{ p.id }}">
+        <div class="buy-row">
+          <div class="qty"><button type="button" data-step="-" aria-label="Decrease quantity">−</button><label class="sr-only" for="qty">Quantity</label><input id="qty" name="qty" type="number" inputmode="numeric" min="1" max="{{ [p.stock_qty, 10]|min if p.track_stock and not p.allow_backorder else 10 }}" value="1"><button type="button" data-step="+" aria-label="Increase quantity">+</button></div>
+          <button class="btn" id="main-cta" type="submit">Add to cart</button>
+        </div>
+        <button class="btn btn-outline btn-block" type="submit" name="buy_now" value="1">Buy now</button>
+      </form>
+      {% if label == 'low' %}<p class="stock-low">Only {{ p.stock_qty }} left</p>{% endif %}
+      {% endif %}
+
+      <ul class="mini-trust">
+        {% if S.free_ship_threshold|int %}<li>Free shipping on orders of {{ S.free_ship_threshold|int|inr }} or more</li>{% endif %}
+        {% if S.cod_enabled == '1' and p.allow_cod %}<li>Pay on delivery available{% if S.cod_fee|int %} (handling fee {{ S.cod_fee|int|inr }}){% endif %}, up to {{ S.cod_max|int|inr }}</li>{% endif %}
+        <li>{{ S.returns_summary }}</li>
+      </ul>
+
+      <details class="acc" open><summary>Details</summary><div class="acc-body">
+        {% if p.description %}<p>{{ p.description|nl2br }}</p>{% endif %}
+        <table class="spec"><tbody>
+          {% for c in cols if c.kind == 'deity' %}<tr><th>Deity</th><td>{{ c.name }}{% if c.name_native %} · <span class="native">{{ c.name_native }}</span>{% endif %}</td></tr>{% endfor %}
+          {% if p.material %}<tr><th>Material</th><td>{{ p.material }}{% if demo_site and p.is_demo %} <span class="muted">(unconfirmed — sample)</span>{% endif %}</td></tr>{% endif %}
+          {% if p.finish %}<tr><th>Finish</th><td>{{ p.finish }}</td></tr>{% endif %}
+          {% if p.height_cm %}<tr><th>Height</th><td>{{ '%g'|format(p.height_cm) }} cm</td></tr>{% endif %}
+          {% if p.width_cm %}<tr><th>Width</th><td>{{ '%g'|format(p.width_cm) }} cm</td></tr>{% endif %}
+          {% if p.depth_cm %}<tr><th>Depth</th><td>{{ '%g'|format(p.depth_cm) }} cm</td></tr>{% endif %}
+          {% if p.weight_g %}<tr><th>Weight</th><td>{{ '%.2f'|format(p.weight_g / 1000) }} kg</td></tr>{% endif %}
+          {% if p.base_included %}<tr><th>Base / stand</th><td>{{ p.base_included }}</td></tr>{% endif %}
+          {% if p.origin_region %}<tr><th>Made in</th><td>{{ p.origin_region }}</td></tr>{% endif %}
+        </tbody></table>
+        {% if demo_site and p.is_demo %}<p class="small muted">Sizes and weights on sample listings are targets, not measurements.</p>{% endif %}
+      </div></details>
+      {% if p.story %}<details class="acc"><summary>About this piece</summary><div class="acc-body"><p>{{ p.story|nl2br }}</p></div></details>{% endif %}
+      {% if p.care %}<details class="acc"><summary>Care</summary><div class="acc-body"><p>{{ p.care|nl2br }}</p></div></details>{% endif %}
+      <details class="acc"><summary>Shipping &amp; returns</summary><div class="acc-body">
+        <p>{{ S.delivery_note }}</p><p>{{ S.returns_summary }}</p>
+        <p><a href="{{ url_for('shop.page', slug='shipping-policy') }}">Shipping policy</a> · <a href="{{ url_for('shop.page', slug='returns-policy') }}">Returns &amp; refunds</a></p>
+      </div></details>
+    </div>
+  </div>
+
+  <section id="reviews" class="section">
+    <h2>Reviews</h2>
+    {% if reviews %}{% for r in reviews %}<div class="review"><div class="stars">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</div>{% if r.title %}<strong>{{ r.title }}</strong>{% endif %}{% if r.body %}<p>{{ r.body }}</p>{% endif %}<div class="who">{{ r.uname.split(' ')[0] }} · verified purchase · {{ r.created_at[:10] }}</div></div>{% endfor %}
+    {% else %}<p class="muted">No reviews yet. Reviews come only from customers who have received this piece.</p>{% endif %}
+    {% if can_review %}
+    <form method="post" action="{{ url_for('shop.submit_review', slug=p.slug) }}" class="card-box">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><h3>Write a review</h3>
+      <fieldset class="field"><legend class="sr-only">Rating</legend><div class="rating-pick">{% for n in range(1,6) %}<label><input type="radio" name="rating" value="{{ n }}" required><span>{{ n }}★</span></label>{% endfor %}</div></fieldset>
+      <div class="field"><label for="rt">Title</label><input id="rt" name="title" maxlength="120"></div>
+      <div class="field"><label for="rb">Your review</label><textarea id="rb" name="body" maxlength="1500"></textarea></div>
+      <button class="btn" type="submit">Submit review</button>
+    </form>
+    {% elif my_review %}<p class="muted small">Your review is {{ my_review.status }}.</p>{% endif %}
+  </section>
+
+  {% if related %}<section class="section"><div class="section-head"><h2>You may also like</h2></div><div class="grid">{% for r in related %}{{ card(r) }}{% endfor %}</div></section>{% endif %}
+  {% if recent %}<section class="section"><div class="section-head"><h2>Recently viewed</h2></div><div class="grid">{% for r in recent %}{{ card(r) }}{% endfor %}</div></section>{% endif %}
+</div>
+{% if not out %}
+<div class="sticky-buy" aria-label="Quick add to cart">
+  <div class="p"><b>{{ p.price|inr }}</b><span>{{ p.title }}</span></div>
+  <form method="post" action="{{ url_for('checkout.cart_add') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="product_id" value="{{ p.id }}"><input type="hidden" name="qty" value="1"><button class="btn" type="submit">Add to cart</button></form>
+</div>
+{% endif %}
+{% endblock %}

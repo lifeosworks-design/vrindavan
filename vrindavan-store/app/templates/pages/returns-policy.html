@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Returns & refunds — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section"><div class="prose">
+<h1>Returns & refunds</h1>
+{% if S.policies_reviewed != "1" %}<div class="draft-note">Draft — this page has not yet been reviewed by a legal adviser and will be finalised before launch.</div>{% endif %}
+<h2>Damaged or wrong items</h2><p>{{ S.returns_summary }}</p>
+<h2>Used or worshipped murtis</h2><p>For reasons of respect and hygiene we cannot accept the return of a murti that has been installed or worshipped.</p>
+<h2>Cancelling an order</h2><p>You can cancel from your account while the order is pending or confirmed. After it has shipped, please contact us.</p>
+<h2>Refunds</h2><p>Refund method and timing depend on how the order was paid. Details will be confirmed here before launch.</p>
+</div></div>
+{% endblock %}

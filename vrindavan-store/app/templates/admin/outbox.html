@@ -1,0 +1,7 @@
+{% extends "admin/base.html" %}
+{% block title %}Outbox{% endblock %}
+{% block content %}
+<h1>Notification outbox</h1>
+<p class="muted">Emails are <strong>logged here, not sent</strong>. Connect an email/WhatsApp provider before launch (see README).</p>
+{% for m in mails %}<div class="panel"><div class="inline justify"><strong>{{ m.subject }}</strong><span class="muted small">{{ m.created_at|dt }}</span></div><p class="small muted">To {{ m.to_email }} · {{ m.kind }}</p><p>{{ m.body|nl2br }}</p></div>{% else %}<p class="muted">Empty.</p>{% endfor %}
+{% endblock %}

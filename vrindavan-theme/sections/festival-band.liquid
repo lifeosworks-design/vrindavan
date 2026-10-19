@@ -1,0 +1,46 @@
+<section class="festival reveal" {{ section.shopify_attributes }}>
+  <div class="container">
+    {%- if section.settings.eyebrow != blank -%}<span class="eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+    <h2>{{ section.settings.heading }}</h2>
+    {%- if section.settings.text != blank -%}<p>{{ section.settings.text }}</p>{%- endif -%}
+    <div class="purpose-links center">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.label != blank -%}
+          <a class="btn btn-gold" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Festival band",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "For every occasion" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Festivals, gifting & home mandir" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Find the right murti for Diwali, a housewarming or your daily puja." }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Home mandir" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Festival band",
+      "blocks": [
+        { "type": "button", "settings": { "label": "Home mandir" } },
+        { "type": "button", "settings": { "label": "Gifting" } },
+        { "type": "button", "settings": { "label": "Festivals" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

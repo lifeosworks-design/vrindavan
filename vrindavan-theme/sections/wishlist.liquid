@@ -1,0 +1,15 @@
+<div class="container section" {{ section.shopify_attributes }}>
+  <h1>{{ page.title | default: 'Your wishlist' }}</h1>
+  <p class="muted small">Saved on this device. Tap the heart on any murti to add it here.</p>
+  <div class="grid" data-wishlist-grid></div>
+  <div class="empty" data-wishlist-empty hidden>
+    <p>Nothing saved yet.</p>
+    <a class="btn" href="{{ routes.all_products_collection_url }}">Browse murtis</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Wishlist"
+}
+{% endschema %}

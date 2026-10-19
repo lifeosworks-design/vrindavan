@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<h1>Inventory</h1>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Product</th><th class="n">On hand</th><th class="n">Alert at</th><th>Adjust</th></tr></thead><tbody>
+{% for p in products %}<tr><td><a href="{{ url_for('admin.product_edit', pid=p.id) }}">{{ p.title }}</a>{% if not p.is_active %} <span class="muted small">(hidden)</span>{% endif %}</td>
+  <td class="n">{% if p.track_stock %}<strong class="{{ 'stock-low' if p.stock_qty <= p.low_stock_at }}">{{ p.stock_qty }}</strong>{% else %}not tracked{% endif %}</td><td class="n">{{ p.low_stock_at }}</td>
+  <td>{% if p.track_stock %}<form method="post" action="{{ url_for('admin.product_stock', pid=p.id) }}" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="next" value="{{ url_for('admin.inventory') }}"><label class="sr-only" for="d{{ p.id }}">Change</label><input id="d{{ p.id }}" name="delta" type="number" class="w-sm" placeholder="±" required><label class="sr-only" for="r{{ p.id }}">Reason</label><input id="r{{ p.id }}" name="reason" class="w-lg" placeholder="Reason"><button class="btn btn-outline btn-sm">Apply</button></form>{% endif %}</td></tr>
+{% endfor %}</tbody></table></div>
+<div class="panel"><h2>Recent stock movements</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>When</th><th>Product</th><th class="n">Change</th><th>Reason</th><th>By</th></tr></thead><tbody>
+{% for m in moves %}<tr><td>{{ m.created_at|dt }}</td><td>{{ m.title }}</td><td class="n">{{ '%+d'|format(m.delta) }}</td><td>{{ m.reason }}</td><td>{{ m.uname or 'system' }}</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

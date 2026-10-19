@@ -1,0 +1,30 @@
+<div class="container narrow" {{ section.shopify_attributes }}>
+  <h1>{{ page.title }}</h1>
+  {%- if page.content != blank -%}<div class="rte muted">{{ page.content }}</div>{%- endif -%}
+  {%- if settings.support_email != blank or settings.support_phone != blank -%}
+    <p class="muted">
+      {%- if settings.support_email != blank -%}Email <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>. {% endif -%}
+      {%- if settings.support_phone != blank -%}Call {{ settings.support_phone }}.{%- endif -%}
+    </p>
+  {%- endif -%}
+
+  {%- form 'contact', class: 'card-box', novalidate: 'novalidate' -%}
+    {%- if form.posted_successfully? -%}
+      <div class="flash success" role="status">Thank you — we have received your message and will reply soon.</div>
+    {%- endif -%}
+    {%- if form.errors -%}
+      <div class="flash error" role="alert">{{ form.errors | default_errors }}</div>
+    {%- endif -%}
+    <div class="field"><label for="contact-name">Your name</label><input id="contact-name" type="text" name="contact[name]" autocomplete="name" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" required></div>
+    <div class="field"><label for="contact-email">Email</label><input id="contact-email" type="email" name="contact[email]" autocomplete="email" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" required></div>
+    <div class="field"><label for="contact-phone">Mobile (optional)</label><input id="contact-phone" type="tel" name="contact[phone]" inputmode="numeric" maxlength="10" autocomplete="tel-national" value="{{ form.phone }}"></div>
+    <div class="field"><label for="contact-body">Message</label><textarea id="contact-body" name="contact[body]" maxlength="2000" required>{{ form.body }}</textarea></div>
+    <button class="btn btn-block" type="submit">Send message</button>
+  {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "Contact form"
+}
+{% endschema %}

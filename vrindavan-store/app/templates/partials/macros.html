@@ -1,0 +1,51 @@
+{% macro icon(name) -%}
+{%- if name == 'menu' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+{%- elif name == 'search' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+{%- elif name == 'heart' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+{%- elif name == 'bag' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+{%- elif name == 'user' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg>
+{%- elif name == 'close' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro img(base, alt, cls='', sizes='(min-width:900px) 25vw, 50vw', eager=false) -%}
+<img {% if cls %}class="{{ cls }}"{% endif %} src="{{ url_for('media', filename=base ~ '_800.webp') }}"
+     srcset="{{ url_for('media', filename=base ~ '_480.webp') }} 480w, {{ url_for('media', filename=base ~ '_800.webp') }} 800w, {{ url_for('media', filename=base ~ '_1200.webp') }} 1200w"
+     sizes="{{ sizes }}" alt="{{ alt }}" width="800" height="1000" {% if eager %}fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+{%- endmacro %}
+
+{% macro lotus() -%}
+<div class="lotus-rule" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 4c3 4 4 8 0 14-4-6-3-10 0-14z"/><path d="M16 18c-2-5-7-7-11-6 1 6 5 10 11 11 6-1 10-5 11-11-4-1-9 1-11 6z"/></svg></div>
+{%- endmacro %}
+
+{% macro card(p) -%}
+{% set out = stock_label(p) == 'out' %}
+<article class="card">
+  <button type="button" class="wish" data-wish="{{ p.id }}" aria-pressed="{{ 'true' if p.id in wl_ids else 'false' }}" aria-label="{{ 'Remove from wishlist' if p.id in wl_ids else 'Add to wishlist' }}">{{ icon('heart') }}</button>
+  <a class="card-link" href="{{ url_for('shop.product', slug=p.slug) }}">
+    <div class="card-img">
+      {% if out %}<span class="tag out">Sold out</span>{% elif demo_site and p.is_demo %}<span class="tag">Sample</span>{% endif %}
+      {% if p.img %}{{ img(p.img, p.img_alt or p.title) }}{% endif %}
+    </div>
+    <div class="card-body">
+      <h3 class="card-title">{{ p.title }}</h3>
+      <div class="card-meta">{{ p.material or '' }}{% if p.material and p.height_cm %} · {% endif %}{% if p.height_cm %}{{ '%g'|format(p.height_cm) }} cm{% endif %}</div>
+      {% if p.rev_count and p.rev_count >= (S.reviews_min_to_show_stars|int(3)) %}<div class="stars" aria-label="Rated {{ '%.1f'|format(p.rev_avg) }} out of 5">★ {{ '%.1f'|format(p.rev_avg) }} <span class="muted">({{ p.rev_count }})</span></div>{% endif %}
+      <div class="price">{{ p.price|inr }}{% if p.compare_at_price %}<s>{{ p.compare_at_price|inr }}</s>{% endif %}</div>
+      {% if stock_label(p) == 'low' %}<div class="stock-low">Only {{ p.stock_qty }} left</div>{% endif %}
+    </div>
+  </a>
+</article>
+{%- endmacro %}
+
+{% macro field(name, label, form, errors, type='text', attrs='', hint='', required=false, autocomplete='') -%}
+<div class="field {{ 'has-error' if errors.get(name) }}">
+  <label for="{{ name }}">{{ label }}{% if required %} <span aria-hidden="true">*</span>{% endif %}</label>
+  <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ form.get(name, '') if type != 'password' else '' }}" {% if required %}required{% endif %}
+         {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %} {{ attrs|safe }} {% if errors.get(name) %}aria-invalid="true" aria-describedby="{{ name }}-err"{% endif %}>
+  {% if hint %}<div class="hint">{{ hint }}</div>{% endif %}
+  {% if errors.get(name) %}<div class="err" id="{{ name }}-err">{{ errors[name] }}</div>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro status(s) -%}<span class="status {{ s }}">{{ s }}</span>{%- endmacro %}

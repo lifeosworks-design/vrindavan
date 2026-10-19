@@ -1,0 +1,88 @@
+{%- paginate collection.products by section.settings.products_per_page -%}
+<section class="page-hero" {{ section.shopify_attributes }}>
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a> / {% unless collection.handle == 'all' %}<a href="{{ routes.all_products_collection_url }}">Murtis</a> / {% endunless %}{{ collection.title }}</nav>
+    <h1>{{ collection.title }}{% if collection.metafields.custom.native_name != blank %} <span class="native">{{ collection.metafields.custom.native_name }}</span>{% endif %}</h1>
+    {%- if collection.description != blank -%}<div class="muted prose">{{ collection.description }}</div>{%- endif -%}
+    <p class="muted small">{{ collection.products_count }} piece{% if collection.products_count != 1 %}s{% endif %}</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="layout-collection">
+    <dialog class="filters" aria-label="Filters">
+      <form method="get" action="{{ collection.url }}" class="filters-in">
+        <div class="inline"><h2 class="grow">Filter &amp; sort</h2><button type="button" class="icon-btn close-x" data-filters-close aria-label="Close filters">{% render 'icon', name: 'close' %}</button></div>
+
+        {%- if collection.sort_options.size > 0 -%}
+          <h3>Sort by</h3>
+          <div class="field">
+            <label class="visually-hidden" for="sort_by">Sort by</label>
+            <select id="sort_by" name="sort_by">
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endif -%}
+
+        {%- for filter in collection.filters -%}
+          <h3>{{ filter.label }}</h3>
+          {%- case filter.type -%}
+            {%- when 'price_range' -%}
+              <div class="row2">
+                <div><label class="visually-hidden" for="{{ filter.min_value.param_name }}">Minimum</label>
+                  <input id="{{ filter.min_value.param_name }}" type="number" inputmode="numeric" name="{{ filter.min_value.param_name }}" min="0" placeholder="Min (₹)" {% if filter.min_value.value %}value="{{ filter.min_value.value | divided_by: 100 }}"{% endif %}></div>
+                <div><label class="visually-hidden" for="{{ filter.max_value.param_name }}">Maximum</label>
+                  <input id="{{ filter.max_value.param_name }}" type="number" inputmode="numeric" name="{{ filter.max_value.param_name }}" min="0" placeholder="Max (₹)" {% if filter.max_value.value %}value="{{ filter.max_value.value | divided_by: 100 }}"{% endif %}></div>
+              </div>
+            {%- else -%}
+              {%- for value in filter.values -%}
+                <label class="check">
+                  <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                  {{ value.label }} <span class="muted small">({{ value.count }})</span>
+                </label>
+              {%- endfor -%}
+          {%- endcase -%}
+        {%- endfor -%}
+
+        <div class="actions">
+          <a class="btn btn-outline" href="{{ collection.url }}">Clear</a>
+          <button class="btn" type="submit">Show results</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div>
+      {%- if collection.products.size > 0 -%}
+        <div class="grid">
+          {%- for product in collection.products -%}{% render 'product-card', product: product %}{%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Pages">
+            {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" aria-label="Previous page">←</a>{%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}<span class="current" aria-current="page">{{ part.title }}</span>
+              {%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}<a href="{{ paginate.next.url }}" aria-label="Next page">→</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty-state"><p>No murtis match these filters.</p><p><a class="btn btn-outline" href="{{ collection.url }}">Clear filters</a></p></div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+<div class="filter-pill" role="group" aria-label="Filter and sort"><button type="button" data-filters-open>Filter</button><button type="button" data-filters-open>Sort</button></div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Shipping policy — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section"><div class="prose">
+<h1>Shipping policy</h1>
+{% if S.policies_reviewed != "1" %}<div class="draft-note">Draft — this page has not yet been reviewed by a legal adviser and will be finalised before launch.</div>{% endif %}
+<h2>Where we deliver</h2><p>We deliver within India. You can check your PIN code on any product page; some PIN codes may not be serviceable.</p>
+<h2>Shipping charges</h2><p>{% if S.free_ship_threshold|int %}Shipping is free on orders of {{ S.free_ship_threshold|int|inr }} or more. Below that, shipping is {{ S.ship_fee_below|int|inr }}.{% else %}Shipping charges are shown at checkout.{% endif %}{% if S.heavy_surcharge|int %} Very heavy pieces may carry an extra charge of {{ S.heavy_surcharge|int|inr }}.{% endif %} Some remote areas may have an additional charge, shown at checkout.</p>
+<h2>Dispatch and delivery</h2><p>{{ S.delivery_note }}</p>
+<h2>Cash on delivery</h2><p>{% if S.cod_enabled == '1' %}Available for eligible orders up to {{ S.cod_max|int|inr }}{% if S.cod_fee|int %}; a handling fee of {{ S.cod_fee|int|inr }} applies{% endif %}. We may call or message you to confirm a cash-on-delivery order before dispatch.{% else %}Not available at the moment.{% endif %}</p>
+</div></div>
+{% endblock %}

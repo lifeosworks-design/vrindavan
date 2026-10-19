@@ -1,0 +1,12 @@
+<div class="container err-page" {{ section.shopify_attributes }}>
+  <div class="big">404</div>
+  <h1>Page not found</h1>
+  <p class="muted">We couldn't find the page you were looking for.</p>
+  <p class="inline center"><a class="btn" href="{{ routes.root_url }}">Back to home</a><a class="btn btn-outline" href="{{ routes.all_products_collection_url }}">Browse murtis</a></p>
+</div>
+
+{% schema %}
+{
+  "name": "Not found"
+}
+{% endschema %}

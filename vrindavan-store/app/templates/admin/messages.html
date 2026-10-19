@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<h1>Contact messages</h1>
+{% for m in messages %}<div class="panel"><div class="inline justify"><strong>{{ m.name }}</strong><span class="muted small">{{ m.created_at|dt }}</span></div>
+  <p class="small muted">{{ m.email or '' }} {{ m.phone or '' }}</p><p>{{ m.message|nl2br }}</p>
+  <form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ m.id }}"><input type="hidden" name="handled" value="{{ 0 if m.handled else 1 }}"><button class="btn btn-outline btn-sm">{{ 'Mark as new' if m.handled else 'Mark handled' }}</button></form></div>
+{% else %}<p class="muted">No messages.</p>{% endfor %}
+{% endblock %}

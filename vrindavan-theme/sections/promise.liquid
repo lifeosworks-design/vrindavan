@@ -1,0 +1,49 @@
+<section class="container section-pad reveal" {{ section.shopify_attributes }}>
+  <div class="promise">
+    {%- for block in section.blocks -%}
+      <div class="pt" {{ block.shopify_attributes }}>
+        <span class="ic">{% render 'icon', name: block.settings.icon %}</span>
+        <div>
+          <h3>{{ block.settings.heading }}</h3>
+          <p>{{ block.settings.text }}</p>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promise cards",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "truck",
+          "options": [
+            { "value": "truck", "label": "Delivery" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "heart", "label": "Heart" }
+          ]
+        },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Delivery & payment" },
+        { "type": "textarea", "id": "text", "label": "Text", "info": "Only write what your shipping and payment settings really do." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promise cards",
+      "blocks": [
+        { "type": "card", "settings": { "icon": "truck", "heading": "Delivery & payment", "text": "Delivery time is confirmed for your PIN code after you place the order." } },
+        { "type": "card", "settings": { "icon": "shield", "heading": "If something is wrong", "text": "If a piece arrives damaged, tell us within 48 hours with photos." } },
+        { "type": "card", "settings": { "icon": "chat", "heading": "Need help choosing?", "text": "Tell us the space, the deity and your budget — send us a message." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h1>Settings</h1>
+<div class="warnbox">Shipping, COD and wording defaults are <strong>pilot hypotheses</strong>, not locked decisions. Do not publish delivery-time, “free shipping”, “handcrafted”, “pure” or similar claims until the evidence exists (see the claim evidence register).</div>
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% for group, fields in groups %}
+  <div class="panel"><h2>{{ group }}</h2>
+    {% for key, label in fields %}<div class="field"><label for="{{ key }}">{{ label }}</label>
+      {% if key in ('announcement','delivery_note','returns_summary','business_address') %}<textarea id="{{ key }}" name="{{ key }}" maxlength="500">{{ S[key] }}</textarea>
+      {% else %}<input id="{{ key }}" name="{{ key }}" value="{{ S[key] }}">{% endif %}</div>{% endfor %}
+  </div>{% endfor %}
+  <button class="btn" type="submit">Save settings</button>
+</form>
+{% endblock %}

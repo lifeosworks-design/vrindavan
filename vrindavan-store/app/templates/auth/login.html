@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign in — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow">
+  <h1>Sign in</h1>
+  <form method="post" class="card-box" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="username" value="{{ email }}"></div>
+    <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+    {% if error %}<div class="field has-error"><div class="err">{{ error }}</div></div>{% endif %}
+    <button class="btn btn-block" type="submit">Sign in</button>
+    <p class="small center"><a href="{{ url_for('auth.forgot') }}">Forgot your password?</a></p>
+  </form>
+  <p class="center">New here? <a href="{{ url_for('auth.register', next=request.args.get('next')) }}">Create an account</a></p>
+  <p class="center small muted">You can also <a href="{{ url_for('checkout.checkout') }}">check out as a guest</a>.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+﻿Courier / platform,Weight slab,Mode (surface/air),L1 Moradabad->Delhi prepaid forward INR excl GST,L2 Jaipur->Mumbai prepaid forward INR excl GST,L3 Jaipur->Bengaluru prepaid forward INR excl GST,L4 Moradabad->Kolkata prepaid forward INR excl GST,L5 ->Guwahati (NE/remote) prepaid forward INR excl GST,L6 ->Leh/Srinagar (remote) prepaid forward INR excl GST,COD fee flat INR,COD fee % of order value,COD minimum INR,RTO charge (INR or % of forward),Reverse pickup INR,Damage/loss liability cap INR,Insurance charge % (declared value),Volumetric divisor,ODA/remote surcharge INR,Fuel surcharge %,GST % on freight,Minimum chargeable weight / minimum charge INR,Pickup charge INR,Transit days metro,Transit days tier-2/3,Transit days remote,Serviceable PIN coverage / pincode check method,Quote date,Quote valid until,Source (name / email / dashboard screenshot),Notes,STATUS (NOT REQUESTED / REQUESTED / RECEIVED)
+Shiprocket (aggregator),0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quote via seller dashboard / sales; ask which underlying couriers,NOT REQUESTED
+Shiprocket (aggregator),500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quote via seller dashboard / sales; ask which underlying couriers,NOT REQUESTED
+Shiprocket (aggregator),1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quote via seller dashboard / sales; ask which underlying couriers,NOT REQUESTED
+Shiprocket (aggregator),2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quote via seller dashboard / sales; ask which underlying couriers,NOT REQUESTED
+Shiprocket (aggregator),3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quote via seller dashboard / sales; ask which underlying couriers,NOT REQUESTED
+Shiprocket (aggregator),5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quote via seller dashboard / sales; ask which underlying couriers,NOT REQUESTED
+Delhivery (direct or via aggregator),0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,Direct rate card at your volume,NOT REQUESTED
+Delhivery (direct or via aggregator),500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Direct rate card at your volume,NOT REQUESTED
+Delhivery (direct or via aggregator),1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Direct rate card at your volume,NOT REQUESTED
+Delhivery (direct or via aggregator),2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Direct rate card at your volume,NOT REQUESTED
+Delhivery (direct or via aggregator),3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Direct rate card at your volume,NOT REQUESTED
+Delhivery (direct or via aggregator),5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Direct rate card at your volume,NOT REQUESTED
+Blue Dart,0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,Premium/heavy quote,NOT REQUESTED
+Blue Dart,500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Premium/heavy quote,NOT REQUESTED
+Blue Dart,1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Premium/heavy quote,NOT REQUESTED
+Blue Dart,2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Premium/heavy quote,NOT REQUESTED
+Blue Dart,3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Premium/heavy quote,NOT REQUESTED
+Blue Dart,5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Premium/heavy quote,NOT REQUESTED
+DTDC,0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,Secondary quote,NOT REQUESTED
+DTDC,500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Secondary quote,NOT REQUESTED
+DTDC,1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Secondary quote,NOT REQUESTED
+DTDC,2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Secondary quote,NOT REQUESTED
+DTDC,3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Secondary quote,NOT REQUESTED
+DTDC,5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Secondary quote,NOT REQUESTED
+Amazon Shipping,0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,Confirm it accepts non-Amazon (Shopify) orders and serviceability,NOT REQUESTED
+Amazon Shipping,500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Confirm it accepts non-Amazon (Shopify) orders and serviceability,NOT REQUESTED
+Amazon Shipping,1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Confirm it accepts non-Amazon (Shopify) orders and serviceability,NOT REQUESTED
+Amazon Shipping,2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Confirm it accepts non-Amazon (Shopify) orders and serviceability,NOT REQUESTED
+Amazon Shipping,3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Confirm it accepts non-Amazon (Shopify) orders and serviceability,NOT REQUESTED
+Amazon Shipping,5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Confirm it accepts non-Amazon (Shopify) orders and serviceability,NOT REQUESTED
+India Post Speed Post,0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,Remote PIN option; confirm parcel COD (VPP) availability,NOT REQUESTED
+India Post Speed Post,500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Remote PIN option; confirm parcel COD (VPP) availability,NOT REQUESTED
+India Post Speed Post,1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Remote PIN option; confirm parcel COD (VPP) availability,NOT REQUESTED
+India Post Speed Post,2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Remote PIN option; confirm parcel COD (VPP) availability,NOT REQUESTED
+India Post Speed Post,3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Remote PIN option; confirm parcel COD (VPP) availability,NOT REQUESTED
+India Post Speed Post,5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,Remote PIN option; confirm parcel COD (VPP) availability,NOT REQUESTED
+Other (aggregator suggests),0-500 g,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NOT REQUESTED
+Other (aggregator suggests),500 g-1 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NOT REQUESTED
+Other (aggregator suggests),1-2 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NOT REQUESTED
+Other (aggregator suggests),2-3 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NOT REQUESTED
+Other (aggregator suggests),3-5 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NOT REQUESTED
+Other (aggregator suggests),5-10 kg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NOT REQUESTED

@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% block title %}Collections{% endblock %}
+{% block content %}
+<h1>Collections</h1>
+<p class="muted">Deity collections appear in “Shop by deity”; purpose collections in “Shop by purpose”. A collection shows in the menus only when it has live products.</p>
+<div class="panel"><h2>Add a collection</h2>
+<form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <div class="field"><label for="n">Name</label><input id="n" name="name" required></div>
+  <div class="field"><label for="nn">Name in Devanagari (optional)</label><input id="nn" name="name_native" placeholder="गणेश"></div>
+  <div class="field"><label for="k">Type</label><select id="k" name="kind"><option value="deity">Deity</option><option value="purpose">Purpose</option></select></div>
+  <div class="field"><label for="so">Sort order</label><input id="so" name="sort_order" type="number" value="0"></div>
+  <div class="field"><label for="ds">Description</label><textarea id="ds" name="description"></textarea></div>
+  <label class="check"><input type="checkbox" name="is_active" value="1" checked> Active</label>
+  <div><button class="btn">Add</button></div></form></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Type</th><th class="n">Products</th><th>Edit</th></tr></thead><tbody>
+{% for c in collections %}<tr><td colspan="4"><form method="post" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ c.id }}">
+  <input name="name" value="{{ c.name }}" class="w-lg" aria-label="Name"><input name="name_native" value="{{ c.name_native or '' }}" class="w-sm" aria-label="Devanagari name">
+  <select name="kind" class="w-sm" aria-label="Type"><option value="deity" {{ 'selected' if c.kind == 'deity' }}>deity</option><option value="purpose" {{ 'selected' if c.kind == 'purpose' }}>purpose</option></select>
+  <input name="sort_order" type="number" value="{{ c.sort_order }}" class="w-sm" aria-label="Sort order"><input name="description" value="{{ c.description or '' }}" placeholder="Description" class="w-lg" aria-label="Description">
+  <label class="check"><input type="checkbox" name="is_active" value="1" {{ 'checked' if c.is_active }}> Active</label> <span class="muted small">{{ c.n }} products</span>
+  <button class="btn btn-outline btn-sm" name="action" value="save">Save</button>
+  {% if can('collections.manage') %}<button class="btn btn-ghost btn-sm" name="action" value="delete" formnovalidate>Delete</button>{% endif %}</form></td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

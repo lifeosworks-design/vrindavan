@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<h1>Orders</h1>
+<div class="pills"><a class="{{ 'cur' if not status }}" href="{{ url_for('admin.orders') }}">All</a>{% for s in statuses %}<a class="{{ 'cur' if status == s }}" href="{{ url_for('admin.orders', status=s) }}">{{ s|capitalize }}{% if counts.get(s) %} ({{ counts[s] }}){% endif %}</a>{% endfor %}</div>
+<form class="filters-row" method="get"><input type="hidden" name="status" value="{{ status }}"><label class="sr-only" for="q">Search</label><input id="q" type="search" name="q" value="{{ term }}" placeholder="Order no, name, phone, email, AWB">
+  <label class="sr-only" for="pay">Payment</label><select id="pay" name="pay"><option value="">All payments</option><option value="cod" {{ 'selected' if request.args.get('pay') == 'cod' }}>COD</option><option value="online" {{ 'selected' if request.args.get('pay') == 'online' }}>Online</option></select><button class="btn btn-outline btn-sm">Filter</button></form>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Order</th><th>Customer</th><th>Ship to</th><th>Status</th><th>Payment</th><th class="n">Total</th></tr></thead><tbody>
+{% for o in orders %}<tr><td><a href="{{ url_for('admin.order_detail', order_no=o.order_no) }}">{{ o.order_no }}</a><br><span class="muted small">{{ o.created_at|dt }}</span></td><td>{{ o.customer_name }}<br><span class="muted small">{{ o.phone }}</span></td><td>{{ o.ship_city }}, {{ o.ship_pincode }}</td><td>{{ status(o.status) }}</td><td>{{ o.payment_method|upper }} · {{ status(o.payment_status) }}{% if o.payment_method == 'cod' and not o.cod_confirmed and o.status == 'pending' %}<br><span class="small stock-low">confirm COD</span>{% endif %}</td><td class="n">{{ o.total|inr }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">No orders found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

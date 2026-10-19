@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ 'Tax invoice' if S.gstin else 'Order receipt' }} {{ o.order_no }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=1"></head>
+<body>
+<div class="receipt">
+  <div class="inline justify no-print"><a href="javascript:history.back()">← Back</a> <span class="muted small">Use your browser's Print to save as PDF</span></div>
+  <h1>{{ 'Tax invoice' if S.gstin else 'Order receipt' }}</h1>
+  {% if not S.gstin %}<p class="small muted">This receipt is not a GST tax invoice. A tax invoice is issued once the seller is GST-registered.</p>{% endif %}
+  <p><strong>{{ S.legal_name or S.store_name }}</strong>{% if S.business_address %}<br>{{ S.business_address }}{% endif %}{% if S.gstin %}<br>GSTIN: {{ S.gstin }}{% endif %}{% if S.support_email %}<br>{{ S.support_email }}{% endif %}</p>
+  <dl class="kv"><dt>Order</dt><dd>{{ o.order_no }}</dd><dt>Date</dt><dd>{{ o.created_at|dt }}</dd><dt>Bill / ship to</dt><dd>{{ o.ship_name }}<br>{{ o.ship_line1 }}{% if o.ship_line2 %}, {{ o.ship_line2 }}{% endif %}<br>{{ o.ship_city }}, {{ o.ship_state }} {{ o.ship_pincode }}<br>{{ o.ship_phone }}</dd><dt>Payment</dt><dd>{{ 'Cash on delivery' if o.payment_method == 'cod' else 'Online' }} ({{ o.payment_status }})</dd></dl>
+  <table><thead><tr><th>Item</th>{% if S.gstin %}<th>HSN</th><th class="n">GST %</th>{% endif %}<th class="n">Qty</th><th class="n">Price</th><th class="n">Amount</th></tr></thead><tbody>
+  {% for it in items %}<tr><td>{{ it.title }}</td>{% if S.gstin %}<td>{{ it.hsn_snapshot or '—' }}</td><td class="n">{{ '%g'|format(it.gst_snapshot) if it.gst_snapshot is not none else '—' }}</td>{% endif %}<td class="n">{{ it.qty }}</td><td class="n">{{ it.unit_price|inr }}</td><td class="n">{{ it.line_total|inr }}</td></tr>{% endfor %}
+  </tbody></table>
+  <dl class="kv"><dt>Subtotal</dt><dd>{{ o.subtotal|inr }}</dd>{% if o.discount %}<dt>Discount</dt><dd>−{{ o.discount|inr }}</dd>{% endif %}<dt>Shipping</dt><dd>{{ o.shipping_fee|inr }}</dd>{% if o.cod_fee %}<dt>COD fee</dt><dd>{{ o.cod_fee|inr }}</dd>{% endif %}<dt><strong>Total</strong></dt><dd><strong>{{ o.total|inr }}</strong></dd></dl>
+  {% if S.gstin %}<p class="small muted">Prices are inclusive of applicable GST at the rates shown. Confirm rates with your tax adviser before issuing invoices.</p>{% endif %}
+</div></body></html>

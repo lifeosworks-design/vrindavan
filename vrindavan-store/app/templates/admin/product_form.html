@@ -1,0 +1,89 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Edit product' if p else 'New product' }}{% endblock %}
+{% macro inp(name, label, type='text', hint='', step='') -%}
+<div class="field {{ 'has-error' if errors.get(name) }}"><label for="{{ name }}">{{ label }}</label>
+<input id="{{ name }}" name="{{ name }}" type="{{ type }}" {% if step %}step="{{ step }}"{% endif %} value="{{ v.get(name) if v.get(name) is not none else '' }}">
+{% if hint %}<div class="hint">{{ hint }}</div>{% endif %}{% if errors.get(name) %}<div class="err">{{ errors[name] }}</div>{% endif %}</div>
+{%- endmacro %}
+{% macro chk(name, label, hint='') -%}
+<label class="check"><input type="checkbox" name="{{ name }}" value="1" {{ 'checked' if v.get(name) }}> <span>{{ label }}{% if hint %}<br><span class="hint">{{ hint }}</span>{% endif %}</span></label>
+{%- endmacro %}
+{% block content %}
+<p><a href="{{ url_for('admin.products') }}">← Products</a></p>
+<h1>{{ 'Edit: ' ~ p.title if p else 'Add product' }}</h1>
+<form method="post" enctype="multipart/form-data" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <div class="panel"><h2>Basics</h2>
+    {{ inp('title', 'Title *') }}
+    {{ inp('subtitle', 'Subtitle (e.g. “Brass · 6 in”)') }}
+    {% if p %}{{ inp('slug', 'URL slug') }}{% endif %}
+    <div class="field"><label for="description">Description</label><textarea id="description" name="description">{{ v.get('description') or '' }}</textarea><div class="hint">Only state what you can evidence (see the claim register). No “pure”, “handcrafted”, “artisan-made” unless the supplier has confirmed it in writing.</div></div>
+    <div class="field"><label for="story">About this piece (optional)</label><textarea id="story" name="story">{{ v.get('story') or '' }}</textarea></div>
+    <div class="field"><label for="care">Care (optional)</label><textarea id="care" name="care">{{ v.get('care') or '' }}</textarea></div>
+  </div>
+  <div class="panel"><h2>Price</h2>
+    <div class="form-grid three">
+      {{ inp('price', 'Selling price ₹ (incl. taxes) *', 'number') }}
+      {{ inp('compare_at_price', 'Compare-at ₹', 'number', 'Leave blank unless it is a TRUE previous selling price.') }}
+      {{ inp('cost_price', 'Your cost ₹ (private)', 'number', 'Supplier landed cost. Never shown to customers; used for margin reports.') }}
+    </div>
+    <div class="form-grid">{{ inp('hsn_code', 'HSN code (private/invoice)') }}{{ inp('gst_rate', 'GST rate % (private/invoice)', 'number', 'Leave blank until your CA confirms.', '0.01') }}</div>
+  </div>
+  <div class="panel"><h2>Specification</h2>
+    <div class="form-grid three">{{ inp('material', 'Material (e.g. Brass)') }}{{ inp('finish', 'Finish') }}{{ inp('base_included', 'Base / stand') }}</div>
+    <div class="form-grid three">{{ inp('height_cm', 'Height (cm)', 'number', '', '0.1') }}{{ inp('width_cm', 'Width (cm)', 'number', '', '0.1') }}{{ inp('depth_cm', 'Depth (cm)', 'number', '', '0.1') }}</div>
+    <div class="form-grid three">{{ inp('weight_g', 'Weight (grams)', 'number') }}{{ inp('packed_weight_g', 'Packed weight (grams)', 'number') }}{{ inp('origin_region', 'Made in (only if confirmed)') }}</div>
+  </div>
+  <div class="panel"><h2>Collections</h2>
+    <div class="form-grid">{% for c in collections %}<label class="check"><input type="checkbox" name="collections" value="{{ c.id }}" {{ 'checked' if c.id in selected }}> {{ c.name }} <span class="muted small">({{ c.kind }})</span></label>{% endfor %}</div>
+  </div>
+  <div class="panel"><h2>Stock &amp; supplier</h2>
+    <div class="form-grid three">
+      {% if p %}<div class="field"><label>Stock on hand</label><p><strong>{{ p.stock_qty }}</strong> <span class="muted small">— adjust below (every change is logged)</span></p></div>{% else %}{{ inp('initial_stock', 'Opening stock', 'number') }}{% endif %}
+      {{ inp('low_stock_at', 'Low-stock alert at', 'number') }}{{ inp('supplier_name', 'Supplier (private)') }}
+    </div>
+    {{ inp('supplier_sku', 'Supplier SKU / reference (private)') }}
+    {{ chk('track_stock', 'Track stock for this product') }}
+    {{ chk('allow_backorder', 'Allow orders when out of stock') }}
+    {{ chk('allow_cod', 'Allow cash on delivery', 'Untick for very fragile or high-value items.') }}
+    {{ chk('fragile', 'Fragile (internal flag)') }}
+  </div>
+  <div class="panel"><h2>Evidence badges (shown to customers only when ticked)</h2>
+    {{ chk('measured_by_us', 'Measured by us', 'Tick only after you measured the physical piece.') }}
+    {{ chk('photographed_by_us', 'Photographed by us') }}
+    {{ chk('protective_packing', 'Protective packing', 'Tick only if the packing passed your test.') }}
+  </div>
+  <div class="panel"><h2>Photos</h2>
+    <div class="field"><label for="images">Upload photos (JPG/PNG/WebP, up to 8 MB each)</label><input id="images" type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple><div class="hint">Photos are resized and converted to WebP automatically. First photo is the cover.</div></div>
+  </div>
+  <div class="panel"><h2>Visibility &amp; SEO</h2>
+    {{ chk('is_active', 'Live on the store') }}{{ chk('is_featured', 'Featured on the home page') }}
+    {{ inp('seo_title', 'SEO title') }}{{ inp('seo_description', 'SEO description') }}
+  </div>
+  <p><button class="btn" type="submit">Save product</button></p>
+</form>
+
+{% if p %}
+<div class="panel" id="images"><h2>Photos ({{ images|length }})</h2>
+  <div class="img-admin">{% for im in images %}<div class="im">
+    <img src="{{ url_for('media', filename=im.base ~ '_480.webp') }}" alt="{{ im.alt or '' }}" width="130" height="162">{% if im.is_placeholder %}<span class="status pending">placeholder</span>{% endif %}
+    <form method="post" action="{{ url_for('admin.product_image_action', pid=p.id, iid=im.id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button name="action" value="first" class="btn btn-outline btn-sm" title="Make cover">Cover</button>
+      <button name="action" value="up" class="btn btn-outline btn-sm" aria-label="Move earlier">←</button>
+      <button name="action" value="down" class="btn btn-outline btn-sm" aria-label="Move later">→</button>
+      <button name="action" value="delete" class="btn btn-ghost btn-sm">Delete</button></form>
+    <form method="post" action="{{ url_for('admin.product_image_action', pid=p.id, iid=im.id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="alt"><label class="sr-only" for="alt{{ im.id }}">Alt text</label><input id="alt{{ im.id }}" name="alt" value="{{ im.alt or '' }}" placeholder="Alt text"><button class="btn btn-outline btn-sm">Save alt</button></form>
+  </div>{% else %}<p class="muted">No photos yet.</p>{% endfor %}</div>
+</div>
+{% if can('inventory.manage') %}
+<div class="panel"><h2>Adjust stock</h2>
+  <form method="post" action="{{ url_for('admin.product_stock', pid=p.id) }}" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label class="sr-only" for="delta">Change</label><input id="delta" name="delta" type="number" placeholder="+5 or -1" required class="w-sm">
+    <label class="sr-only" for="reason">Reason</label><input id="reason" name="reason" placeholder="Reason (e.g. supplier delivery)" class="w-lg">
+    <button class="btn btn-sm">Update stock</button></form>
+  <h3>Recent movements</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>When</th><th class="n">Change</th><th>Reason</th><th>By</th></tr></thead><tbody>{% for m in movements %}<tr><td>{{ m.created_at|dt }}</td><td class="n">{{ '%+d'|format(m.delta) }}</td><td>{{ m.reason }}</td><td>{{ m.uname or 'system' }}</td></tr>{% else %}<tr><td colspan="4" class="muted">None yet.</td></tr>{% endfor %}</tbody></table></div>
+</div>{% endif %}
+{% if can('products.delete') %}<form method="post" action="{{ url_for('admin.product_delete', pid=p.id) }}" data-confirm="Delete this product permanently? Past orders keep their item details."><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn btn-danger btn-sm">Delete product</button></form>{% endif %}
+{% endif %}
+{% endblock %}

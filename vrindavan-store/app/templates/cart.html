@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}Your cart — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow-wide">
+  <div class="page-head"><h1>Your cart</h1></div>
+  {% if not lines %}
+    <div class="empty"><p>Your cart is empty.</p><p><a class="btn" href="{{ url_for('shop.shop_all') }}">Browse murtis</a></p></div>
+  {% else %}
+  <div class="stack-2">
+    <div>
+      {% for l in lines %}{% set p = l.product %}
+      <div class="cart-line">
+        <a class="thumb" href="{{ url_for('shop.product', slug=p.slug) }}">{% if l.img %}{{ img(l.img, p.title, sizes='84px') }}{% endif %}</a>
+        <div>
+          <h3><a href="{{ url_for('shop.product', slug=p.slug) }}">{{ p.title }}</a></h3>
+          <div class="muted small">{{ p.material or '' }}{% if demo_site and p.is_demo %} · sample listing{% endif %}</div>
+          <div class="price">{{ p.price|inr }}</div>
+          <div class="ctrl">
+            <form method="post" action="{{ url_for('checkout.cart_update') }}" class="inline">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="product_id" value="{{ p.id }}">
+              <label class="sr-only" for="q{{ p.id }}">Quantity</label>
+              <select id="q{{ p.id }}" name="qty" data-autosubmit>{% for n in range(1, [10, (p.stock_qty if p.track_stock and not p.allow_backorder else 10)]|min + 1) %}<option value="{{ n }}" {{ 'selected' if n == l.qty }}>{{ n }}</option>{% endfor %}</select>
+              <noscript><button class="btn btn-outline btn-sm">Update</button></noscript>
+            </form>
+            <form method="post" action="{{ url_for('checkout.cart_remove') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="product_id" value="{{ p.id }}"><button class="link-btn">Remove</button></form>
+            <strong>{{ l.line_total|inr }}</strong>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <aside class="summary">
+      <h2>Order summary</h2>
+      {% if S.free_ship_threshold|int and t.free_ship_gap %}
+        <p class="small">Add <strong>{{ t.free_ship_gap|inr }}</strong> more for free shipping.</p>
+        <div class="progress" aria-hidden="true"><i class="w{{ ((1 - t.free_ship_gap / (S.free_ship_threshold|int)) * 10)|round(0, 'floor')|int * 10 }}"></i></div>
+      {% elif S.free_ship_threshold|int %}<p class="small">You have free shipping.</p>{% endif %}
+      <dl>
+        <div class="r"><dt>Subtotal</dt><dd>{{ t.subtotal|inr }}</dd></div>
+        {% if t.discount %}<div class="r"><dt>Discount ({{ coupon }})</dt><dd>−{{ t.discount|inr }}</dd></div>{% endif %}
+        <div class="r"><dt>Shipping</dt><dd>{{ 'Free' if not t.shipping else t.shipping|inr }}</dd></div>
+        <div class="r total"><dt>Total</dt><dd>{{ t.total|inr }}</dd></div>
+      </dl>
+      <p class="small muted">Cash-on-delivery fee (if any) and PIN-code charges are shown at checkout.</p>
+      {% if coupon %}
+        <form method="post" action="{{ url_for('checkout.cart_coupon') }}" class="coupon"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="remove" value="1"><span class="grow">Coupon <strong>{{ coupon }}</strong> applied</span><button class="link-btn">Remove</button></form>
+      {% else %}
+        <form method="post" action="{{ url_for('checkout.cart_coupon') }}" class="coupon"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><label class="sr-only" for="cc">Coupon code</label><input id="cc" name="code" placeholder="Coupon code" maxlength="40" autocapitalize="characters"><button class="btn btn-outline">Apply</button></form>
+      {% endif %}
+      <a class="btn btn-block" href="{{ url_for('checkout.checkout') }}">Checkout</a>
+      <p class="center small"><a href="{{ url_for('shop.shop_all') }}">Continue shopping</a></p>
+    </aside>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

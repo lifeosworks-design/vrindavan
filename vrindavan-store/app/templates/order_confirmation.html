@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}Order {{ o.order_no }} — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow">
+  <div class="center"><h1>Thank you, {{ o.customer_name.split(' ')[0] }}.</h1>
+  <p>Your order <strong>{{ o.order_no }}</strong> has been received.</p></div>
+  {{ lotus() }}
+  <div class="card-box">
+    <dl class="kv">
+      <dt>Status</dt><dd>{{ status(o.status) }}</dd>
+      <dt>Payment</dt><dd>{{ 'Cash on delivery' if o.payment_method == 'cod' else 'Online' }} — {{ o.payment_status }}</dd>
+      <dt>Total</dt><dd><strong>{{ o.total|inr }}</strong></dd>
+      <dt>Deliver to</dt><dd>{{ o.ship_name }}, {{ o.ship_line1 }}{% if o.ship_line2 %}, {{ o.ship_line2 }}{% endif %}, {{ o.ship_city }}, {{ o.ship_state }} {{ o.ship_pincode }}</dd>
+    </dl>
+  </div>
+  <div class="card-box"><h2>Items</h2>{% for it in items %}<div class="inline justify"><span>{{ it.title }} × {{ it.qty }}</span><strong>{{ it.line_total|inr }}</strong></div>{% endfor %}</div>
+  <p>{{ S.delivery_note }} {% if o.payment_method == 'cod' %}Our team may contact you on {{ o.phone }} to confirm your cash-on-delivery order.{% endif %} We have noted a confirmation for {{ o.email }}.</p>
+  <p class="inline"><a class="btn" href="{{ url_for('checkout.track') }}">Track this order</a>
+  {% if not g.user %}<a class="btn btn-outline" href="{{ url_for('auth.register') }}">Create an account</a>{% endif %}
+  <a class="btn btn-ghost" href="{{ url_for('shop.shop_all') }}">Continue shopping</a></p>
+</div>
+{% endblock %}

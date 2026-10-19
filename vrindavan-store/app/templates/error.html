@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container err-page">
+  <div class="big">{{ code }}</div>
+  <h1>{{ title }}</h1>
+  <p class="muted">{{ msg }}</p>
+  <p class="inline center"><a class="btn" href="{{ url_for('shop.home') }}">Back to home</a><a class="btn btn-outline" href="{{ url_for('shop.shop_all') }}">Browse murtis</a></p>
+</div>
+{% endblock %}

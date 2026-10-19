@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Choose a new password — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow">
+  <h1>Choose a new password</h1>
+  {% if not valid %}<div class="flash error">This reset link is invalid or has expired.</div><p class="center"><a href="{{ url_for('auth.forgot') }}">Request a new link</a></p>
+  {% else %}
+  <form method="post" class="card-box"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="field {{ 'has-error' if error }}"><label for="password">New password</label><input id="password" name="password" type="password" required autocomplete="new-password"><div class="hint">At least 10 characters, with letters and numbers.</div>{% if error %}<div class="err">{{ error }}</div>{% endif %}</div>
+    <button class="btn btn-block" type="submit">Update password</button>
+  </form>{% endif %}
+</div>
+{% endblock %}

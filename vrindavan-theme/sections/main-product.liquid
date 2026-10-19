@@ -1,0 +1,179 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign mf = product.metafields.custom
+  assign material = mf.material.value | default: product.type
+  assign sold_out = true
+  if product.available
+    assign sold_out = false
+  endif
+  assign deity_collection = nil
+  for c in product.collections
+    if c.handle != 'all' and c.handle != 'frontpage'
+      assign deity_collection = c
+      break
+    endif
+  endfor
+-%}
+<div class="container" {{ section.shopify_attributes }}>
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a> / <a href="{{ routes.all_products_collection_url }}">Murtis</a>
+    {%- if deity_collection != blank %} / <a href="{{ deity_collection.url }}">{{ deity_collection.title }}</a>{% endif %} / {{ product.title }}
+  </nav>
+
+  <div class="pdp">
+    <div class="gallery glow">
+      <div class="gallery-track" tabindex="0" aria-label="Product photos">
+        {%- for media in product.media -%}
+          <div class="gallery-slide" data-media-id="{{ media.id }}">
+            {%- if media.media_type == 'image' -%}
+              {%- assign loading = 'lazy' -%}
+              {%- if forloop.first -%}{%- assign loading = 'eager' -%}{%- endif -%}
+              {{ media | image_url: width: 1200 | image_tag:
+                  widths: '480, 720, 960, 1200',
+                  sizes: '(min-width: 900px) 52vw, 88vw',
+                  loading: loading,
+                  alt: media.alt | default: product.title }}
+            {%- else -%}
+              {{ media | media_tag: image_size: '1200x' }}
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="gallery-slide"></div>
+        {%- endfor -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        <div class="dots" aria-hidden="true">{% for media in product.media %}<i></i>{% endfor %}</div>
+        <div class="thumbs">
+          {%- for media in product.media -%}
+            <button type="button" aria-label="Show photo {{ forloop.index }}">{{ media.preview_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}</button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="buy">
+      <h1>{{ product.title }}</h1>
+      {%- if material != blank -%}<p class="sub">{{ material }}{% if mf.height_cm.value != blank %} · {{ mf.height_cm.value }} cm{% endif %}</p>{%- endif -%}
+
+      <div class="big-price" data-price>
+        {{ current_variant.price | money_without_trailing_zeros }}
+        {%- if current_variant.compare_at_price > current_variant.price %}<s>{{ current_variant.compare_at_price | money_without_trailing_zeros }}</s>{% endif -%}
+      </div>
+
+      {%- if mf.measured_by_us.value or mf.photographed_by_us.value or mf.protective_packing.value -%}
+        <div class="evidence">
+          {%- if mf.measured_by_us.value -%}<span>Measured by us</span>{%- endif -%}
+          {%- if mf.photographed_by_us.value -%}<span>Photographed by us</span>{%- endif -%}
+          {%- if mf.protective_packing.value -%}<span>Protective packing</span>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="pin-box">
+        <label for="pin-input">Delivery to PIN code</label>
+        <div class="pin-row">
+          <input id="pin-input" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" autocomplete="postal-code" data-ok="{{ settings.delivery_note | escape }}{% if settings.cod_note != blank %} {{ settings.cod_note | escape }}{% endif %}">
+          <button type="button" class="btn btn-outline btn-sm" id="pin-btn">Check</button>
+        </div>
+        <div class="pin-msg" id="pin-msg" aria-live="polite">{{ settings.delivery_note }}</div>
+      </div>
+
+      {%- form 'product', product, id: 'product-form', class: 'buy-actions', novalidate: 'novalidate' -%}
+        {%- if product.has_only_default_variant -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {%- else -%}
+          <div class="field variant-select">
+            <label for="variant-id">{% for option in product.options_with_values %}{{ option.name }}{% unless forloop.last %} / {% endunless %}{% endfor %}</label>
+            <select id="variant-id" name="id" data-variant-select>
+              {%- for variant in product.variants -%}
+                <option value="{{ variant.id }}" {% if variant == current_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                  {{ variant.title }} — {{ variant.price | money_without_trailing_zeros }}{% unless variant.available %} (sold out){% endunless %}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+          <script type="application/json" data-variants-json>{{ product.variants | json }}</script>
+        {%- endif -%}
+
+        <div class="buy-row">
+          <div class="qty">
+            <button type="button" data-step="-" aria-label="Decrease quantity">−</button>
+            <label class="visually-hidden" for="qty">Quantity</label>
+            <input id="qty" name="quantity" type="number" inputmode="numeric" min="1" max="10" value="1">
+            <button type="button" data-step="+" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="btn" id="main-cta" type="submit" name="add" data-add-btn {% unless current_variant.available %}disabled{% endunless %}>
+            {%- if current_variant.available %}Add to cart{% else %}Sold out{% endif -%}
+          </button>
+        </div>
+        {%- if form.errors -%}<div class="product-form__error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+        {%- if current_variant.available -%}{{ form | payment_button }}{%- endif -%}
+      {%- endform -%}
+
+      <ul class="mini-trust">
+        {%- if settings.free_shipping_threshold > 0 -%}<li>Free shipping on orders of ₹{{ settings.free_shipping_threshold }} or more</li>{%- endif -%}
+        {%- if settings.cod_note != blank -%}<li>{{ settings.cod_note }}</li>{%- endif -%}
+        {%- if settings.returns_summary != blank -%}<li>{{ settings.returns_summary }}</li>{%- endif -%}
+      </ul>
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == '@app' -%}{% render block %}{%- endif -%}
+      {%- endfor -%}
+
+      <details class="acc" open>
+        <summary>Details</summary>
+        <div class="acc-body">
+          {%- if product.description != blank -%}<div class="rte">{{ product.description }}</div>{%- endif -%}
+          <table class="spec"><tbody>
+            {%- if deity_collection != blank -%}<tr><th>Deity</th><td>{{ deity_collection.title }}{% if deity_collection.metafields.custom.native_name != blank %} · <span class="native">{{ deity_collection.metafields.custom.native_name }}</span>{% endif %}</td></tr>{%- endif -%}
+            {%- if material != blank -%}<tr><th>Material</th><td>{{ material }}</td></tr>{%- endif -%}
+            {%- if mf.finish.value != blank -%}<tr><th>Finish</th><td>{{ mf.finish.value }}</td></tr>{%- endif -%}
+            {%- if mf.height_cm.value != blank -%}<tr><th>Height</th><td>{{ mf.height_cm.value }} cm</td></tr>{%- endif -%}
+            {%- if mf.width_cm.value != blank -%}<tr><th>Width</th><td>{{ mf.width_cm.value }} cm</td></tr>{%- endif -%}
+            {%- if mf.depth_cm.value != blank -%}<tr><th>Depth</th><td>{{ mf.depth_cm.value }} cm</td></tr>{%- endif -%}
+            {%- if current_variant.weight > 0 -%}<tr><th>Weight</th><td>{{ current_variant.weight | weight_with_unit }}</td></tr>{%- endif -%}
+            {%- if mf.base_included.value != blank -%}<tr><th>Base / stand</th><td>{{ mf.base_included.value }}</td></tr>{%- endif -%}
+            {%- if mf.origin_region.value != blank -%}<tr><th>Made in</th><td>{{ mf.origin_region.value }}</td></tr>{%- endif -%}
+          </tbody></table>
+        </div>
+      </details>
+      {%- if mf.story.value != blank -%}
+        <details class="acc"><summary>About this piece</summary><div class="acc-body">{{ mf.story | metafield_tag }}</div></details>
+      {%- endif -%}
+      {%- if mf.care.value != blank -%}
+        <details class="acc"><summary>Care</summary><div class="acc-body">{{ mf.care | metafield_tag }}</div></details>
+      {%- endif -%}
+      <details class="acc">
+        <summary>Shipping &amp; returns</summary>
+        <div class="acc-body">
+          <p>{{ settings.delivery_note }}</p>
+          {%- if settings.returns_summary != blank -%}<p>{{ settings.returns_summary }}</p>{%- endif -%}
+          <p>
+            {%- if shop.shipping_policy.url != blank -%}<a href="{{ shop.shipping_policy.url }}">Shipping policy</a>{%- endif -%}
+            {%- if shop.shipping_policy.url != blank and shop.refund_policy.url != blank %} · {% endif -%}
+            {%- if shop.refund_policy.url != blank -%}<a href="{{ shop.refund_policy.url }}">Returns &amp; refunds</a>{%- endif -%}
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+{%- unless sold_out -%}
+  <div class="sticky-buy" aria-label="Quick add to cart">
+    <div class="p"><b data-price>{{ current_variant.price | money_without_trailing_zeros }}</b><span>{{ product.title }}</span></div>
+    {%- form 'product', product, id: 'sticky-form' -%}
+      <input type="hidden" name="id" value="{{ current_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <button class="btn" type="submit" name="add">Add to cart</button>
+    {%- endform -%}
+  </div>
+{%- endunless -%}
+
+<script type="application/ld+json">{{ product | structured_data }}</script>
+
+{% schema %}
+{
+  "name": "Product page",
+  "blocks": [{ "type": "@app" }]
+}
+{% endschema %}

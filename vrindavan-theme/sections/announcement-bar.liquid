@@ -1,0 +1,19 @@
+{%- if section.settings.text != blank -%}
+  <div class="bar bar-announce" {{ section.shopify_attributes }}>
+    {%- if section.settings.link != blank -%}
+      <a href="{{ section.settings.link }}" class="announce-link">{{ section.settings.text }}</a>
+    {%- else -%}
+      {{ section.settings.text }}
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "info": "Leave blank to hide the bar." },
+    { "type": "url", "id": "link", "label": "Link (optional)" }
+  ]
+}
+{% endschema %}

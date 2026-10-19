@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}Track your order — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container narrow">
+  <h1>Track your order</h1>
+  <form method="post" class="card-box">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="field"><label for="order_no">Order number</label><input id="order_no" name="order_no" placeholder="VR2610XXXXXX" required autocapitalize="characters" value="{{ request.form.get('order_no','') }}"></div>
+    <div class="field"><label for="ident">Phone or email used at checkout</label><input id="ident" name="ident" required autocomplete="off" value="{{ request.form.get('ident','') }}"></div>
+    {% if err %}<p class="err field has-error"><span class="err">{{ err }}</span></p>{% endif %}
+    <button class="btn btn-block" type="submit">Track</button>
+  </form>
+  {% if o %}
+  <div class="card-box">
+    <h2>Order {{ o.order_no }} {{ status(o.status) }}</h2>
+    <dl class="kv">
+      <dt>Placed</dt><dd>{{ o.created_at|dt }}</dd><dt>Total</dt><dd>{{ o.total|inr }}</dd>
+      {% if o.courier or o.awb %}<dt>Courier</dt><dd>{{ o.courier or '—' }}</dd><dt>Tracking no.</dt><dd>{{ o.awb or '—' }}{% if o.tracking_url and o.tracking_url.startswith('https://') %} · <a href="{{ o.tracking_url }}" rel="noopener nofollow" target="_blank">Track with courier</a>{% endif %}</dd>{% endif %}
+    </dl>
+    <h3>Progress</h3>
+    <ul class="timeline">{% for e in events %}<li><strong>{{ e.status|capitalize }}</strong>{% if e.note %} — {{ e.note }}{% endif %}<br><span class="muted small">{{ e.created_at|dt }}</span></li>{% endfor %}</ul>
+    <h3>Items</h3>{% for it in items %}<div>{{ it.title }} × {{ it.qty }}</div>{% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

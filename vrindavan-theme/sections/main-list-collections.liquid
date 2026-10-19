@@ -1,0 +1,24 @@
+<section class="page-hero" {{ section.shopify_attributes }}>
+  <div class="container"><h1>Collections</h1></div>
+</section>
+<div class="container section">
+  <div class="collection-grid">
+    {%- for collection in collections -%}
+      {%- unless collection.handle == 'frontpage' -%}
+        <a class="collection-tile" href="{{ collection.url }}">
+          <div class="arch">
+            {%- assign pic = collection.featured_image | default: collection.products.first.featured_media -%}
+            {%- if pic != blank -%}{{ pic | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '(min-width: 900px) 25vw, 50vw', loading: 'lazy', alt: collection.title }}{%- endif -%}
+          </div>
+          <strong>{{ collection.title }}</strong>
+        </a>
+      {%- endunless -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection list"
+}
+{% endschema %}

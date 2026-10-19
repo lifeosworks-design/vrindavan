@@ -1,0 +1,38 @@
+{%- if section.blocks.size > 0 -%}
+<div class="marquee" aria-hidden="true" {{ section.shopify_attributes }}>
+  <div class="track">
+    {%- for i in (1..4) -%}
+      {%- for block in section.blocks -%}
+        <span {{ block.shopify_attributes }}>{{ block.settings.text }}</span><span>✦</span>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Scrolling strip",
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Text",
+      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Ganesha · गणेश" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling strip",
+      "blocks": [
+        { "type": "item", "settings": { "text": "Ganesha · गणेश" } },
+        { "type": "item", "settings": { "text": "Krishna · कृष्ण" } },
+        { "type": "item", "settings": { "text": "Lakshmi · लक्ष्मी" } },
+        { "type": "item", "settings": { "text": "Shiva · शिव" } },
+        { "type": "item", "settings": { "text": "Hanuman · हनुमान" } },
+        { "type": "item", "settings": { "text": "Durga · दुर्गा" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

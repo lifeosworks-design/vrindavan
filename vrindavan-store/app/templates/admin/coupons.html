@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block title %}Coupons{% endblock %}
+{% block content %}
+<h1>Coupons</h1>
+<div class="panel"><h2>New coupon</h2><form method="post" class="form-grid"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <div class="field"><label for="code">Code</label><input id="code" name="code" required maxlength="30" autocapitalize="characters"></div>
+  <div class="field"><label for="kind">Type</label><select id="kind" name="kind"><option value="percent">Percent off</option><option value="fixed">Fixed ₹ off</option></select></div>
+  <div class="field"><label for="value">Value (% or ₹)</label><input id="value" name="value" type="number" min="1" required></div>
+  <div class="field"><label for="min">Minimum order ₹</label><input id="min" name="min_subtotal" type="number" min="0" value="0"></div>
+  <div class="field"><label for="mu">Max uses (blank = unlimited)</label><input id="mu" name="max_uses" type="number" min="1"></div>
+  <div class="field"><label for="ex">Expires on</label><input id="ex" name="expires_at" type="date"></div>
+  <label class="check"><input type="checkbox" name="prepaid_only" value="1"> Online payment only (use for prepaid incentives)</label>
+  <div><button class="btn">Create</button></div></form></div>
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Code</th><th>Discount</th><th>Min</th><th>Used</th><th>Expires</th><th>Status</th><th></th></tr></thead><tbody>
+{% for c in coupons %}<tr><td><strong>{{ c.code }}</strong>{% if c.prepaid_only %}<br><span class="muted small">online only</span>{% endif %}</td><td>{{ (c.value ~ '%') if c.kind == 'percent' else c.value|inr }}</td><td>{{ c.min_subtotal|inr }}</td><td>{{ c.used_count }}{% if c.max_uses %} / {{ c.max_uses }}{% endif %}</td><td>{{ (c.expires_at or '—')[:10] }}</td><td>{{ 'Active' if c.is_active else 'Off' }}</td>
+<td class="inline"><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ c.id }}"><button class="btn btn-outline btn-sm" name="action" value="toggle">{{ 'Disable' if c.is_active else 'Enable' }}</button></form>
+<form method="post" data-confirm="Delete this coupon?"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="id" value="{{ c.id }}"><button class="btn btn-ghost btn-sm" name="action" value="delete">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="7" class="muted">No coupons yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

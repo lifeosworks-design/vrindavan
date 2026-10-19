@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import field with context %}
+{% block title %}Addresses — {{ S.store_name }}{% endblock %}
+{% block content %}
+<div class="container section">
+  <h1>Addresses</h1>{% include "account/_nav.html" %}
+  {% for a in addresses %}
+  <div class="card-box"><strong>{{ a.label or 'Address' }}</strong>{% if a.is_default %} <span class="status confirmed">Default</span>{% endif %}
+    <p>{{ a.name }} · {{ a.phone }}<br>{{ a.line1 }}{% if a.line2 %}, {{ a.line2 }}{% endif %}{% if a.landmark %}, near {{ a.landmark }}{% endif %}<br>{{ a.city }}, {{ a.state }} {{ a.pincode }}</p>
+    <div class="inline">
+      {% if not a.is_default %}<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="default"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn btn-outline btn-sm">Make default</button></form>{% endif %}
+      <form method="post" data-confirm="Remove this address?"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn btn-ghost btn-sm">Remove</button></form>
+    </div>
+  </div>{% endfor %}
+  <form method="post" class="card-box" novalidate><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="add">
+    <h2>Add an address</h2>
+    {{ field('label', 'Label (Home, Office…)', form, errors) }}
+    <div class="form-grid">{{ field('name', 'Full name', form, errors, required=true) }}{{ field('phone', 'Mobile', form, errors, type='tel', attrs='inputmode="numeric" maxlength="10"', required=true) }}</div>
+    {{ field('line1', 'House / flat, street', form, errors, required=true) }}
+    {{ field('line2', 'Area / locality', form, errors) }}{{ field('landmark', 'Landmark', form, errors) }}
+    <div class="form-grid">{{ field('pincode', 'PIN code', form, errors, attrs='inputmode="numeric" maxlength="6"', required=true) }}{{ field('city', 'City', form, errors, required=true) }}</div>
+    <div class="field {{ 'has-error' if errors.get('state') }}"><label for="state">State</label><select id="state" name="state" required><option value="">Select state</option>{% for s in states %}<option {{ 'selected' if s == form.get('state') }}>{{ s }}</option>{% endfor %}</select>{% if errors.get('state') %}<div class="err">{{ errors.state }}</div>{% endif %}</div>
+    <button class="btn" type="submit">Save address</button>
+  </form>
+</div>
+{% endblock %}

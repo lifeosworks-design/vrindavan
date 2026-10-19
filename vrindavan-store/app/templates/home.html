@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block head %}
+<script type="application/ld+json">{{ {"@context":"https://schema.org","@type":"Organization","name":S.store_name,"url":request.url_root}|tojson }}</script>
+{% endblock %}
+{% block content %}
+<section class="hero-dusk">
+  <div class="container">
+    <div class="hero-copy">
+      <span class="eyebrow">Murtis for the home mandir</span>
+      <h1>Bring the <em>mandir</em> home.</h1>
+      <p class="lede">Browse by deity, material or occasion.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="{{ url_for('shop.shop_all') }}">Shop all murtis</a>
+        {% if nav_purposes %}<a class="btn btn-ghost-light" href="{{ url_for('shop.collection', slug=nav_purposes[0].slug) }}">{{ nav_purposes[0].name }}</a>{% endif %}
+      </div>
+      {% if nav_deities %}<div class="hero-chips">{% for d in nav_deities %}<a class="chip on-dark" href="{{ url_for('shop.collection', slug=d.slug) }}">{{ d.name }}{% if d.name_native %} · {{ d.name_native }}{% endif %}</a>{% endfor %}</div>{% endif %}
+    </div>
+    {% if hero and hero.img %}
+    <div class="hero-art">
+      <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
+      <a class="arch" href="{{ url_for('shop.product', slug=hero.slug) }}" aria-label="{{ hero.title }}">{{ img(hero.img, hero.img_alt or hero.title, sizes='(min-width:900px) 400px, 76vw', eager=true) }}</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if nav_deities %}
+<div class="marquee" aria-hidden="true"><div class="track">
+  {% for rep in range(4) %}{% for d in nav_deities %}<span>{{ d.name }}{% if d.name_native %} <b>·</b> {{ d.name_native }}{% endif %}</span><span>✦</span>{% endfor %}{% endfor %}
+</div></div>
+{% endif %}
+
+{% if deity_tiles %}
+<section class="container section-pad reveal">
+  <div class="sec-head"><div><span class="eyebrow">Find your deity</span><h2>Shop by deity</h2></div></div>
+  <div class="deity-rail">
+    {% for d in deity_tiles %}
+    <a class="deity-card d-{{ d.slug }}" href="{{ url_for('shop.collection', slug=d.slug) }}">
+      <div class="arch">{% if d.img %}{{ img(d.img, d.name, sizes='(min-width:900px) 15vw, 150px') }}{% endif %}</div>
+      <strong>{{ d.name }}</strong>{% if d.name_native %}<span class="native">{{ d.name_native }}</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if featured %}
+<section class="container section-pad reveal">
+  <div class="sec-head"><div><span class="eyebrow">Handpicked for you</span><h2>Featured murtis</h2></div><a href="{{ url_for('shop.shop_all') }}">View all →</a></div>
+  <div class="grid">{% for p in featured[:8] %}{{ card(p) }}{% endfor %}</div>
+</section>
+{% else %}
+<section class="container section-pad"><div class="empty"><p>New murtis are coming soon.</p></div></section>
+{% endif %}
+
+{% if nav_purposes %}
+<section class="festival reveal">
+  <div class="container">
+    <span class="eyebrow">For every occasion</span>
+    <h2>Festivals, gifting &amp; home mandir</h2>
+    <p>Find the right murti for Diwali, a housewarming or your daily puja.</p>
+    <div class="purpose-links center">{% for c in nav_purposes %}<a class="btn btn-gold" href="{{ url_for('shop.collection', slug=c.slug) }}">{{ c.name }}</a>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+
+{% if home_reviews %}
+<section class="container section-pad reveal">
+  <div class="sec-head"><div><span class="eyebrow">Verified purchases</span><h2>From our customers</h2></div></div>
+  {% for r in home_reviews %}<div class="review"><div class="stars">{{ '★' * r.rating }}</div><strong>{{ r.title or r.ptitle }}</strong><p>{{ r.body }}</p><div class="who">{{ r.uname.split(' ')[0] }} · verified purchase · {{ r.ptitle }}</div></div>{% endfor %}
+</section>
+{% endif %}
+
+<section class="container section-pad reveal">
+  <div class="promise">
+    <div class="pt"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></span>
+      <div><h3>Delivery &amp; payment</h3><p>{{ S.delivery_note }}{% if S.free_ship_threshold|int %} Free shipping on orders of {{ S.free_ship_threshold|int|inr }} or more.{% endif %}{% if S.cod_enabled == '1' %} Pay on delivery up to {{ S.cod_max|int|inr }}.{% endif %}</p></div></div>
+    <div class="pt"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.500 8-8 9-4.500-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+      <div><h3>If something is wrong</h3><p>{{ S.returns_summary }}</p></div></div>
+    <div class="pt"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span>
+      <div><h3>Need help choosing?</h3><p>Tell us the space, the deity and your budget — <a href="{{ url_for('shop.contact') }}">send us a message</a>{% if S.whatsapp %} or chat on WhatsApp{% endif %}.</p></div></div>
+  </div>
+</section>
+{% endblock %}

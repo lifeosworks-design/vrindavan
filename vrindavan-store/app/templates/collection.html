@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, img, lotus, card, field, status with context %}
+{% block title %}{{ title }} — {{ S.store_name }}{% endblock %}
+{% block desc %}{{ (collection.description if collection and collection.description) or ('Browse ' ~ title ~ ' at ' ~ S.store_name ~ '.') }}{% endblock %}
+{% macro filter_form() %}
+<form method="get" action="{{ request.path }}" class="filters-in">
+  {% if search_term %}<input type="hidden" name="q" value="{{ search_term }}">{% endif %}
+  <div class="inline"><h2 class="grow">Filter &amp; sort</h2><button type="button" class="icon-btn close-x" data-filters-close aria-label="Close filters">{{ icon('close') }}</button></div>
+  <h3>Sort by</h3>
+  <div class="field"><label class="sr-only" for="sort">Sort</label>
+    <select id="sort" name="sort">
+      {% for k, lbl in [('featured','Featured'),('newest','Newest'),('price_asc','Price: low to high'),('price_desc','Price: high to low')] %}<option value="{{ k }}" {{ 'selected' if sort == k }}>{{ lbl }}</option>{% endfor %}
+    </select></div>
+  {% if not collection or collection.kind != 'deity' %}{% if facets_d %}<h3>Deity</h3>
+    {% for d in facets_d %}<label class="check"><input type="checkbox" name="deity" value="{{ d.slug }}" {{ 'checked' if d.slug in deities }}> {{ d.name }}{% if d.name_native %} <span class="native">{{ d.name_native }}</span>{% endif %}</label>{% endfor %}{% endif %}{% endif %}
+  {% if facets_m %}<h3>Material</h3>
+    {% for m in facets_m %}<label class="check"><input type="checkbox" name="material" value="{{ m.material }}" {{ 'checked' if m.material in materials }}> {{ m.material }}</label>{% endfor %}{% endif %}
+  <h3>Price (₹)</h3>
+  <div class="row2"><div><label class="sr-only" for="min">Minimum</label><input id="min" type="number" inputmode="numeric" min="0" name="min" placeholder="Min" value="{{ pmin if pmin is not none }}"></div>
+  <div><label class="sr-only" for="max">Maximum</label><input id="max" type="number" inputmode="numeric" min="0" name="max" placeholder="Max" value="{{ pmax if pmax is not none }}"></div></div>
+  <h3>Availability</h3>
+  <label class="check"><input type="checkbox" name="in_stock" value="1" {{ 'checked' if in_stock }}> In stock only</label>
+  <div class="actions"><a class="btn btn-outline" href="{{ request.path }}{% if search_term %}?q={{ search_term|urlencode }}{% endif %}">Clear</a><button class="btn" type="submit">Show {{ total }} result{{ '' if total == 1 else 's' }}</button></div>
+</form>
+{% endmacro %}
+{% block content %}
+<section class="page-hero"><div class="container">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ url_for('shop.home') }}">Home</a> / {% if collection %}<a href="{{ url_for('shop.shop_all') }}">Murtis</a> / {{ collection.name }}{% else %}{{ title }}{% endif %}</nav>
+  <h1>{{ title }}{% if collection and collection.name_native %} <span class="native">{{ collection.name_native }}</span>{% endif %}</h1>
+  {% if collection and collection.description %}<p class="muted prose">{{ collection.description }}</p>{% endif %}
+  <p class="muted small">{{ total }} piece{{ '' if total == 1 else 's' }}</p>
+</div></section>
+<div class="container">
+  <div class="layout-collection">
+    <dialog class="filters" aria-label="Filters">{{ filter_form() }}</dialog>
+    <div>
+      {% if products %}
+        <div class="grid">{% for p in products %}{{ card(p) }}{% endfor %}</div>
+        {% if pages > 1 %}
+        <nav class="pager" aria-label="Pages">
+          {% for n in range(1, pages + 1) %}{% if n == page %}<span class="cur" aria-current="page">{{ n }}</span>{% else %}<a href="{{ request.path }}?{{ request.args.to_dict(flat=False)|urlencode_args(page=n) }}">{{ n }}</a>{% endif %}{% endfor %}
+        </nav>
+        {% endif %}
+      {% else %}
+        <div class="empty"><p>{% if search_term %}Nothing matched “{{ search_term }}”. Try a deity name such as Ganesha, or a material such as brass.{% else %}No murtis match these filters.{% endif %}</p><p><a class="btn btn-outline" href="{{ url_for('shop.shop_all') }}">See all murtis</a></p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<div class="filter-pill" role="group" aria-label="Filter and sort"><button type="button" data-filters-open>Filter</button><button type="button" data-filters-open>Sort</button></div>
+{% endblock %}
