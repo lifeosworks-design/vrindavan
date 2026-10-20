@@ -401,7 +401,7 @@
 .vr .sec-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}
 .vr .sec-head .eyebrow{color:var(--gold-deep);display:block;margin-bottom:4px}
 .vr .sec-head h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0}
-.vr .section-pad{padding:44px 0 8px}
+.vr .section-pad{padding-block:44px 8px}
 .vr .deity-rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gut) * -1);padding:6px var(--gut) 18px;scrollbar-width:none}
 .vr .deity-rail::-webkit-scrollbar{display:none}
 .vr .deity-card{flex:0 0 150px;scroll-snap-align:start;display:block;border-radius:22px;padding:12px 12px 16px;text-align:center;color:#fff;text-decoration:none;position:relative;overflow:hidden;

@@ -71,7 +71,7 @@ h1,h2,h3{font-family:var(--display)}
 .sec-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}
 .sec-head .eyebrow{color:var(--gold-deep);display:block;margin-bottom:4px}
 .sec-head h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0}
-.section-pad{padding:44px 0 8px}
+.section-pad{padding-block:44px 8px}
 
 /* deity cards */
 .deity-rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gut) * -1);padding:6px var(--gut) 18px;scrollbar-width:none}
@@ -201,3 +201,9 @@ html.js .reveal.d1{transition-delay:.08s}html.js .reveal.d2{transition-delay:.16
   .deity-card strong{font-size:1.75rem}
   .deity-card .native{font-size:2.125rem}
 }
+
+/* Bordered product cards */
+.card{border:1px solid var(--gold-deep);border-radius:22px;padding:10px 10px 14px;background:#fffdf8;box-shadow:0 0 0 4px rgba(233,180,73,.12);transition:border-color .25s,box-shadow .25s}
+.card:hover{border-color:var(--maroon);box-shadow:0 0 0 4px rgba(167,29,42,.12)}
+.card .card-img{box-shadow:none}
+.card .card-body{padding:10px 6px 0}

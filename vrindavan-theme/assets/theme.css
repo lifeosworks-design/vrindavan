@@ -449,7 +449,7 @@ h1,h2,h3{font-family:var(--display)}
 .sec-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}
 .sec-head .eyebrow{color:var(--gold-deep);display:block;margin-bottom:4px}
 .sec-head h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0}
-.section-pad{padding:44px 0 8px}
+.section-pad{padding-block:44px 8px}
 
 /* deity cards */
 .deity-rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gut) * -1);padding:6px var(--gut) 18px;scrollbar-width:none}
