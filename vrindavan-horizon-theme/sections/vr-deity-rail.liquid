@@ -1,0 +1,82 @@
+<div class="vr">
+<section class="container section-pad reveal" {{ section.shopify_attributes }}>
+  <div class="sec-head">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}<span class="eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+  </div>
+  <div class="deity-rail">
+    {%- for block in section.blocks -%}
+      {%- assign c = block.settings.collection -%}
+      {%- if c != blank -%}
+        {%- liquid
+          assign pic = block.settings.image
+          if pic == blank
+            assign pic = c.featured_image
+          endif
+          if pic == blank
+            assign first = c.products.first
+            assign pic = first.featured_media
+          endif
+        -%}
+        <a class="deity-card d-{{ block.settings.colour }}" href="{{ c.url }}" {{ block.shopify_attributes }}>
+          <div class="arch">
+            {%- if pic != blank -%}
+              {{ pic | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '(min-width: 900px) 25vw, 280px', loading: 'lazy', alt: c.title }}
+            {%- endif -%}
+          </div>
+          <strong>{{ block.settings.title | default: c.title }}</strong>
+          {%- if block.settings.native_name != blank -%}<span class="native">{{ block.settings.native_name }}</span>{%- endif -%}
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+</div>
+
+{% schema %}
+{
+  "name": "Shop by deity",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Find your deity" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by deity" }
+  ],
+  "blocks": [
+    {
+      "type": "deity",
+      "name": "Deity",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Name (optional)", "info": "Defaults to the collection title." },
+        { "type": "text", "id": "native_name", "label": "Name in Devanagari", "info": "Only add names that have been checked by a Hindi reader." },
+        { "type": "image_picker", "id": "image", "label": "Image (optional)", "info": "Defaults to the collection image, then its first product." },
+        {
+          "type": "select", "id": "colour", "label": "Card colour", "default": "ganesha",
+          "options": [
+            { "value": "ganesha", "label": "Marigold" },
+            { "value": "krishna", "label": "Peacock teal" },
+            { "value": "lakshmi", "label": "Rose" },
+            { "value": "shiva", "label": "Indigo-grey" },
+            { "value": "hanuman", "label": "Saffron red" },
+            { "value": "durga", "label": "Deep red" },
+            { "value": "vishnu", "label": "Blue" }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by deity",
+      "blocks": [
+        { "type": "deity", "settings": { "native_name": "गणेश", "colour": "ganesha" } },
+        { "type": "deity", "settings": { "native_name": "कृष्ण", "colour": "krishna" } },
+        { "type": "deity", "settings": { "native_name": "लक्ष्मी", "colour": "lakshmi" } },
+        { "type": "deity", "settings": { "native_name": "हनुमान", "colour": "hanuman" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
