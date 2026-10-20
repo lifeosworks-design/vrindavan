@@ -11,7 +11,7 @@ from .services import get_settings, inr, rating_summary, sbool, stock_label
 
 
 def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True, instance_path=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "instance")))
+    app = Flask(__name__, instance_relative_config=True, instance_path=os.environ.get("VR_INSTANCE_DIR") or os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "instance")))
     os.makedirs(app.instance_path, exist_ok=True)
 
     secret_file = os.path.join(app.instance_path, "secret_key")

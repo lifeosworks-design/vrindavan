@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: vrindavan
+    runtime: python
+    rootDir: vrindavan-store
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash start.sh
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: VR_HTTPS
+        value: "1"
+      - key: VR_SECRET_KEY
+        generateValue: true
+      - key: VR_ADMIN_EMAIL
+        sync: false
+      - key: VR_ADMIN_PASSWORD
+        generateValue: true
